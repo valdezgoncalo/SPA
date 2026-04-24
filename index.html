@@ -3,245 +3,285 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SPA Fiscalização - Ultimate v8</title>
+    <title>SPA Fiscalização - Sistema Integrado v10</title>
     <style>
-        :root { --spa-red: #cc0000; --white: #ffffff; --bg: #f8f9fa; --dark: #212529; }
-        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: var(--bg); margin: 0; color: var(--dark); }
+        :root { --spa-red: #cc0000; --dark: #1a1a1a; --bg: #f4f7f6; --accent: #28a745; }
+        body { font-family: 'Inter', sans-serif; background: var(--bg); margin: 0; color: var(--dark); padding-bottom: 60px; }
         
-        /* UI de Navegação */
-        .header { background: var(--spa-red); color: white; padding: 15px; text-align: center; position: sticky; top: 0; z-index: 1000; box-shadow: 0 2px 10px rgba(0,0,0,0.2); }
+        /* Navegação e Header */
+        .header { background: var(--spa-red); color: white; padding: 15px; text-align: center; position: sticky; top: 0; z-index: 1000; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
         .tabs { display: flex; background: white; border-bottom: 2px solid var(--spa-red); position: sticky; top: 50px; z-index: 999; }
-        .tab { flex: 1; padding: 15px; text-align: center; font-weight: bold; cursor: pointer; color: #777; font-size: 0.7rem; text-transform: uppercase; }
+        .tab { flex: 1; padding: 15px; text-align: center; font-weight: bold; cursor: pointer; color: #777; font-size: 0.75rem; text-transform: uppercase; transition: 0.3s; }
         .tab.active { background: var(--spa-red); color: white; }
 
         .container { max-width: 650px; margin: auto; padding: 15px; }
-        .card { background: white; padding: 20px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); margin-bottom: 20px; border-left: 5px solid var(--spa-red); }
-        h2 { font-size: 0.8rem; color: var(--spa-red); text-transform: uppercase; margin-top: 0; border-bottom: 1px solid #eee; padding-bottom: 8px; margin-bottom: 15px; }
-
-        label { display: block; margin-top: 10px; font-size: 0.7rem; font-weight: bold; color: #555; }
-        input, select, textarea { width: 100%; padding: 12px; margin-top: 5px; border: 1px solid #ddd; border-radius: 8px; box-sizing: border-box; font-size: 15px; }
+        .card { background: white; padding: 20px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); margin-bottom: 20px; border-top: 5px solid var(--spa-red); }
+        h2 { font-size: 0.85rem; color: var(--spa-red); text-transform: uppercase; border-bottom: 1px solid #eee; padding-bottom: 8px; margin-bottom: 15px; }
+        
+        label { display: block; margin-top: 12px; font-size: 0.7rem; font-weight: bold; color: #555; text-transform: uppercase; }
+        input, select, textarea { width: 100%; padding: 12px; margin-top: 5px; border: 1px solid #ddd; border-radius: 8px; box-sizing: border-box; font-size: 16px; background: #fafafa; }
         .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
 
-        /* Módulo de Obras Musicais */
-        .obra-item { background: #fff5f5; border: 1px solid #ffcccc; padding: 10px; border-radius: 8px; margin-top: 8px; display: flex; justify-content: space-between; align-items: center; }
-        .btn-listen { background: #333; color: white; border: none; padding: 10px; border-radius: 50px; cursor: pointer; width: 100%; margin-top: 10px; font-weight: bold; }
-        .btn-listen.active { background: var(--spa-red); animation: pulse 1.5s infinite; }
+        /* Módulo de Cálculo SPA 2026 */
+        .calc-box { background: #fff9e6; border: 1px solid #ffeeba; padding: 15px; border-radius: 10px; text-align: center; margin-top: 10px; }
+        .price-main { font-size: 2rem; font-weight: bold; color: var(--spa-red); display: block; }
+        .discount-label { font-size: 0.8rem; color: var(--accent); font-weight: bold; }
 
-        @keyframes pulse { 0% { opacity: 1; } 50% { opacity: 0.5; } 100% { opacity: 1; } }
+        /* Assinaturas e Croqui */
+        .canvas-box { border: 1px dashed #bbb; background: #fdfdfd; width: 100%; height: 150px; touch-action: none; border-radius: 8px; margin-top: 5px; }
+        .btn-clear { background: #eee; border: none; padding: 5px 10px; font-size: 0.6rem; cursor: pointer; margin-top: 5px; border-radius: 4px; }
 
-        /* Canvas de Desenho (Croqui) */
-        .canvas-box { background: #fafafa; border: 1px dashed #bbb; border-radius: 8px; width: 100%; height: 200px; touch-action: none; cursor: crosshair; }
-
-        .btn-main { width: 100%; background: var(--spa-red); color: white; border: none; padding: 18px; border-radius: 10px; font-weight: bold; font-size: 1rem; cursor: pointer; margin-top: 20px; }
+        /* Obras Musicais */
+        .obra-tag { background: #e9ecef; padding: 8px 12px; border-radius: 20px; display: inline-flex; align-items: center; margin: 4px; font-size: 0.85rem; border: 1px solid #dee2e6; }
+        .btn-listen { background: #333; color: white; border: none; padding: 12px; border-radius: 8px; width: 100%; font-weight: bold; cursor: pointer; margin-bottom: 10px; }
+        .btn-listen.active { background: var(--spa-red); animation: pulse 1s infinite; }
         
-        #print-area { display: none; padding: 40px; }
+        @keyframes pulse { 0% { opacity: 1; } 50% { opacity: 0.6; } 100% { opacity: 1; } }
+
+        .btn-main { width: 100%; background: var(--spa-red); color: white; border: none; padding: 18px; border-radius: 10px; font-weight: bold; font-size: 1.1rem; cursor: pointer; box-shadow: 0 4px 12px rgba(204,0,0,0.25); margin-top: 20px; }
+        .btn-main:active { transform: scale(0.98); }
+
+        #print-area { display: none; padding: 30px; font-family: 'Times New Roman', serif; }
         @media print {
             body * { visibility: hidden; }
             #print-area, #print-area * { visibility: visible; }
-            #print-area { display: block; position: absolute; left: 0; top: 0; width: 100%; }
+            #print-area { display: block; position: absolute; left:0; top:0; width:100%; }
         }
     </style>
 </head>
 <body>
 
 <div class="header no-print">
-    <h1 style="margin:0; font-size: 1rem;">S P A — FISCALIZAÇÃO ULTIMATE</h1>
+    <h1 style="margin:0; font-size: 1.1rem; letter-spacing: 2px;">SPA - FISCALIZAÇÃO V10</h1>
 </div>
 
 <div class="tabs no-print">
-    <div class="tab active" id="tab-nova" onclick="switchTab('nova')">Nova Inspeção</div>
-    <div class="tab" id="tab-historico" onclick="switchTab('historico')">Histórico</div>
+    <div class="tab active" id="tab-dash" onclick="switchTab('dash')">📊 Dash</div>
+    <div class="tab" id="tab-nova" onclick="switchTab('nova')">📝 Novo Auto</div>
+    <div class="tab" id="tab-historico" onclick="switchTab('historico')">📂 Histórico</div>
 </div>
 
 <div class="container no-print">
     
-    <div id="view-nova">
+    <div id="view-dash">
+        <div class="grid" style="margin-bottom:20px;">
+            <div class="card" style="text-align:center; margin-bottom:0;">
+                <span style="font-size:1.5rem; font-weight:bold; color:var(--spa-red);" id="stat-total">0</span><br><small>TOTAL AUTOS</small>
+            </div>
+            <div class="card" style="text-align:center; margin-bottom:0;">
+                <span style="font-size:1.5rem; font-weight:bold; color:var(--accent);" id="stat-infra">0</span><br><small>COM INFRAÇÃO</small>
+            </div>
+        </div>
         <div class="card">
-            <h2>📍 Localização e Identificação</h2>
-            <label>Tipo de Estabelecimento</label>
-            <select id="tipo" onchange="toggleHotel()">
-                <option value="Restaurante">Restaurante / Snack-Bar</option>
-                <option value="Hotel">Hotel / Residencial</option>
-                <option value="Bar">Bar / Discoteca</option>
-                <option value="Loja">Comércio / Loja</option>
+            <h2>Atividade Recente</h2>
+            <div id="last-entry" style="font-size:0.8rem; color:#666;">Nenhum registo encontrado.</div>
+        </div>
+    </div>
+
+    <div id="view-nova" style="display:none;">
+        <div class="card">
+            <h2>📍 Identificação do Local</h2>
+            <label>Tipo de Tabela (2026)</label>
+            <select id="tipo-tabela" onchange="runCalculadora()">
+                <option value="rest_amb">Restauração (Música Ambiente)</option>
+                <option value="rest_tv">Restauração (Apenas TV)</option>
+                <option value="disco">Discoteca / Espaço Dança</option>
+                <option value="hotel">Hotelaria (4 Estrelas)</option>
+                <option value="loja">Comércio / Lojas / Ginásios</option>
             </select>
-            <input type="text" id="firma" placeholder="Firma (Ex: Pastelaria Freno, Lda)" style="margin-top:10px;">
+            
+            <label>Nome do Estabelecimento</label>
+            <input type="text" id="firma" placeholder="Ex: Pastelaria Freno, Lda">
+            
             <div class="grid">
-                <input type="number" id="nif" placeholder="NIF">
-                <input type="text" id="cae" placeholder="CAE">
-            </div>
-            <div id="hotel-meta" style="display:none;">
-                <div class="grid" style="margin-top:10px;">
-                    <input type="number" id="quartos" placeholder="N.º Quartos">
-                    <select id="estrelas"><option>Estrelas: -</option><option>3*</option><option>4*</option><option>5*</option></select>
-                </div>
+                <div><label>NIF</label><input type="number" id="nif"></div>
+                <div><label id="lbl-medida">Lotação</label><input type="number" id="val-medida" value="50" oninput="runCalculadora()"></div>
             </div>
         </div>
 
         <div class="card">
-            <h2>🎵 Identificação de Obras Musicais</h2>
-            <p style="font-size: 0.7rem; color: #888; margin-top: -10px;">Identifique as músicas que estão a tocar no local.</p>
-            <button class="btn-listen" id="listenBtn" onclick="simularEscuta()">🎧 OUVIR E IDENTIFICAR MÚSICA</button>
-            
-            <div id="obras-lista" style="margin-top:15px;"></div>
-            
-            <label>Inserção Manual</label>
-            <input type="text" id="manual-obra" placeholder="Nome da Obra / Artista">
-            <button class="btn-listen" style="background:#666; font-size:0.7rem;" onclick="addObraManual()">ADICIONAR À LISTA</button>
+            <h2>💰 Estimativa de Direitos 2026</h2>
+            <div class="calc-box">
+                <span class="price-main" id="calc-mensal">0,00 €</span>
+                <small>Mensalidade Base</small>
+                <hr style="border:0.5px solid #ffeeba; margin:10px 0;">
+                <span id="calc-anual" style="font-size:1.2rem; font-weight:bold; color:var(--accent);">0,00 €</span><br>
+                <span class="discount-label">Anual c/ 10% Desconto de Pronto Pagamento</span>
+            </div>
         </div>
 
         <div class="card">
-            <h2>📐 Croqui do Recinto</h2>
-            <p style="font-size: 0.7rem; color: #888;">Desenhe a localização das colunas (O) e TVs (X).</p>
-            <canvas id="croqui" class="canvas-box"></canvas>
-            <button style="font-size:0.6rem; border:none; padding:5px;" onclick="limparCanvas('croqui')">Limpar Desenho</button>
+            <h2>🎵 Músicas Identificadas</h2>
+            <button class="btn-listen" id="listenBtn" onclick="identificarObra()">🎧 OUVIR E IDENTIFICAR</button>
+            <div id="lista-obras"></div>
+            <input type="text" id="obra-manual" placeholder="Inserir manual..." style="margin-top:10px;">
+            <button class="btn-clear" onclick="addManualObra()">Adicionar</button>
         </div>
 
         <div class="card">
-            <h2>✍️ Validação Digital</h2>
-            <label>Assinatura do Inspetor</label>
-            <canvas id="sig-ins" class="canvas-box" style="height:100px;"></canvas>
-            <label>Assinatura do Responsável</label>
-            <canvas id="sig-res" class="canvas-box" style="height:100px;"></canvas>
+            <h2>📐 Croqui e Assinaturas</h2>
+            <label>Mapa do Local (Colunas e TVs)</label>
+            <canvas id="canvas-croqui" class="canvas-box"></canvas>
+            <button class="btn-clear" onclick="limparCanvas('canvas-croqui')">Limpar Croqui</button>
+            
+            <label style="margin-top:15px;">Assinatura do Inspetor</label>
+            <canvas id="canvas-sig" class="canvas-box" style="height:100px;"></canvas>
+            <button class="btn-clear" onclick="limparCanvas('canvas-sig')">Limpar Assinatura</button>
         </div>
 
-        <button class="btn-main" onclick="salvarAuto()">FINALIZAR E ASSINAR AUTO</button>
+        <button class="btn-main" onclick="salvarAuto()">FINALIZAR AUTO Nº <span id="auto-id"></span></button>
     </div>
 
     <div id="view-historico" style="display:none;">
-        <div id="lista-hist"></div>
+        <div id="lista-historico"></div>
     </div>
+
 </div>
 
 <div id="print-area"></div>
 
 <script>
-    let db = JSON.parse(localStorage.getItem('spa_v8_db')) || [];
-    let obrasDetetadas = [];
+    let db = JSON.parse(localStorage.getItem('spa_master_db')) || [];
+    let obrasList = [];
+    const autoNum = Math.floor(Math.random() * 900000) + 100000;
+    document.getElementById('auto-id').innerText = autoNum;
 
     function switchTab(t) {
-        document.getElementById('view-nova').style.display = t === 'nova' ? 'block' : 'none';
-        document.getElementById('view-historico').style.display = t === 'historico' ? 'block' : 'none';
-        if(t === 'historico') renderHist();
+        ['dash','nova','historico'].forEach(v => {
+            document.getElementById('view-'+v).style.display = 'none';
+            document.getElementById('tab-'+v).classList.remove('active');
+        });
+        document.getElementById('view-'+t).style.display = 'block';
+        document.getElementById('tab-'+t).classList.add('active');
+        if(t === 'dash') updateDash();
+        if(t === 'historico') renderHistorico();
     }
 
-    function toggleHotel() {
-        document.getElementById('hotel-meta').style.display = (document.getElementById('tipo').value === 'Hotel') ? 'block' : 'none';
+    // --- MOTOR DE CÁLCULO 2026 ---
+    function runCalculadora() {
+        const tipo = document.getElementById('tipo-tabela').value;
+        const val = parseInt(document.getElementById('val-medida').value) || 0;
+        const lbl = document.getElementById('lbl-medida');
+        let mensal = 0;
+
+        if(tipo === 'rest_amb') { lbl.innerText = "Lotação"; mensal = val <= 100 ? 14.00 : 15.00; }
+        else if(tipo === 'rest_tv') { lbl.innerText = "Lotação"; mensal = val <= 100 ? 10.50 : 12.50; }
+        else if(tipo === 'disco') { lbl.innerText = "Lotação"; mensal = val <= 100 ? 702.00 : 792.00; }
+        else if(tipo === 'hotel') { lbl.innerText = "Quartos"; mensal = val <= 50 ? 40.00 : 65.00; }
+        else if(tipo === 'loja') { lbl.innerText = "Área m²"; mensal = val <= 100 ? 14.00 : 15.00; }
+
+        const anual = (mensal * 12) * 0.90;
+        document.getElementById('calc-mensal').innerText = mensal.toFixed(2).replace('.', ',') + " €";
+        document.getElementById('calc-anual').innerText = anual.toFixed(2).replace('.', ',') + " € / ano";
     }
 
-    // Funcionalidade de Identificação de Músicas
-    function simularEscuta() {
+    // --- IDENTIFICAÇÃO DE OBRAS ---
+    function identificarObra() {
         const btn = document.getElementById('listenBtn');
-        btn.innerText = "A OUVIR AMBIENTE...";
-        btn.classList.add('active');
-
-        // Simulação de detecção após 2 segundos
+        btn.innerText = "A ESCUTAR..."; btn.classList.add('active');
         setTimeout(() => {
-            const exemplos = ["Pedro Abrunhosa - Fazer o que ainda não foi feito", "Mariza - Ó Gente da Minha Terra", "The Weeknd - Blinding Lights", "Xutos & Pontapés - A Minha Casinha"];
-            const detetada = exemplos[Math.floor(Math.random() * exemplos.length)];
-            
-            obrasDetetadas.push(detetada);
+            const mock = ["Mariza - Melhor de Mim", "Xutos - Contentores", "Coldplay - Yellow", "The Weeknd - Starboy"];
+            const res = mock[Math.floor(Math.random()*mock.length)];
+            obrasList.push(res);
             renderObras();
-            
-            btn.innerText = "🎧 OUVIR E IDENTIFICAR MÚSICA";
-            btn.classList.remove('active');
-        }, 2000);
+            btn.innerText = "🎧 OUVIR E IDENTIFICAR"; btn.classList.remove('active');
+        }, 1500);
     }
-
-    function addObraManual() {
-        const val = document.getElementById('manual-obra').value;
-        if(val) {
-            obrasDetetadas.push(val);
-            document.getElementById('manual-obra').value = '';
-            renderObras();
-        }
+    function addManualObra() {
+        const v = document.getElementById('obra-manual').value;
+        if(v) { obrasList.push(v); document.getElementById('obra-manual').value = ''; renderObras(); }
     }
-
     function renderObras() {
-        const div = document.getElementById('obras-lista');
-        div.innerHTML = obrasDetetadas.map((o, index) => `
-            <div class="obra-item">
-                <span>✅ <b>${o}</b></span>
-                <button onclick="removerObra(${index})" style="border:none; color:red; background:none;">✖</button>
-            </div>
+        document.getElementById('lista-obras').innerHTML = obrasList.map((o, idx) => `
+            <div class="obra-tag">${o} <span style="margin-left:8px; cursor:pointer; color:red;" onclick="obrasList.splice(${idx},1);renderObras();">×</span></div>
         `).join('');
     }
 
-    function removerObra(i) { obrasDetetadas.splice(i, 1); renderObras(); }
-
-    // Gestão de Canvas (Desenho e Assinaturas)
-    function setupCanvas(id) {
-        const c = document.getElementById(id);
-        const ctx = c.getContext('2d');
+    // --- CANVAS DRAWING ---
+    function initCanvas(id) {
+        const c = document.getElementById(id); const ctx = c.getContext('2d');
         let drawing = false;
         c.width = c.offsetWidth; c.height = c.offsetHeight;
-
-        const getXY = (e) => {
-            const rect = c.getBoundingClientRect();
-            const x = (e.clientX || (e.touches ? e.touches[0].clientX : 0)) - rect.left;
-            const y = (e.clientY || (e.touches ? e.touches[0].clientY : 0)) - rect.top;
-            return [x, y];
+        const getPos = (e) => {
+            const r = c.getBoundingClientRect();
+            return { x: (e.clientX || e.touches[0].clientX) - r.left, y: (e.clientY || e.touches[0].clientY) - r.top };
         };
-
-        const start = (e) => { drawing = true; ctx.beginPath(); ctx.moveTo(...getXY(e)); if(e.touches) e.preventDefault(); };
-        const move = (e) => { if(!drawing) return; ctx.lineTo(...getXY(e)); ctx.stroke(); if(e.touches) e.preventDefault(); };
-        
-        c.addEventListener('mousedown', start); c.addEventListener('mousemove', move); window.addEventListener('mouseup', () => drawing = false);
-        c.addEventListener('touchstart', start); c.addEventListener('touchmove', move); c.addEventListener('touchend', () => drawing = false);
+        c.addEventListener('mousedown', (e) => { drawing = true; ctx.beginPath(); const p = getPos(e); ctx.moveTo(p.x, p.y); });
+        c.addEventListener('mousemove', (e) => { if(!drawing) return; const p = getPos(e); ctx.lineTo(p.x, p.y); ctx.stroke(); });
+        window.addEventListener('mouseup', () => drawing = false);
+        c.addEventListener('touchstart', (e) => { drawing = true; ctx.beginPath(); const p = getPos(e); ctx.moveTo(p.x, p.y); e.preventDefault(); });
+        c.addEventListener('touchmove', (e) => { if(drawing) { const p = getPos(e); ctx.lineTo(p.x, p.y); ctx.stroke(); } e.preventDefault(); });
     }
-
-    ['croqui', 'sig-ins', 'sig-res'].forEach(setupCanvas);
+    initCanvas('canvas-croqui'); initCanvas('canvas-sig');
     function limparCanvas(id) { const c = document.getElementById(id); c.getContext('2d').clearRect(0,0,c.width,c.height); }
 
+    // --- BASE DE DADOS E HISTÓRICO ---
     function salvarAuto() {
         const data = {
-            id: Date.now(),
-            firma: document.getElementById('firma').value,
-            tipo: document.getElementById('tipo').value,
-            obras: obrasDetetadas,
-            croqui: document.getElementById('croqui').toDataURL(),
-            sig1: document.getElementById('sig-ins').toDataURL(),
-            sig2: document.getElementById('sig-res').toDataURL(),
+            id: autoNum,
+            firma: document.getElementById('firma').value || "Não Declarado",
+            nif: document.getElementById('nif').value,
+            mensal: document.getElementById('calc-mensal').innerText,
+            obras: obrasList,
+            croqui: document.getElementById('canvas-croqui').toDataURL(),
+            sig: document.getElementById('canvas-sig').toDataURL(),
             data: new Date().toLocaleString('pt-PT')
         };
         db.unshift(data);
-        localStorage.setItem('spa_v8_db', JSON.stringify(db));
-        alert("AUTO GRAVADO COM SUCESSO!");
+        localStorage.setItem('spa_master_db', JSON.stringify(db));
+        alert("Auto Gravado com Sucesso!");
         location.reload();
     }
 
-    function renderHist() {
-        const l = document.getElementById('lista-hist');
-        l.innerHTML = db.map(i => `
-            <div class="card">
-                <strong>${i.firma}</strong><br><small>${i.data}</small><br>
-                <button class="btn-main" style="padding:10px; font-size:0.7rem; background:#444;" onclick="imprimir(${i.id})">VER RELATÓRIO COMPLETO</button>
+    function updateDash() {
+        document.getElementById('stat-total').innerText = db.length;
+        document.getElementById('stat-infra').innerText = db.filter(i => i.obras.length > 0).length;
+        if(db[0]) document.getElementById('last-entry').innerText = `Último: ${db[0].firma} (${db[0].data})`;
+    }
+
+    function renderHistorico() {
+        const h = document.getElementById('lista-historico');
+        h.innerHTML = db.map((i, idx) => `
+            <div class="card" style="border-left: 8px solid var(--spa-red);">
+                <div style="display:flex; justify-content:space-between;">
+                    <strong>${i.firma}</strong>
+                    <span style="color:red; cursor:pointer;" onclick="apagar(${idx})">🗑️</span>
+                </div>
+                <small>Auto #${i.id} | ${i.data}</small><br>
+                <button class="btn-main" style="padding:8px; font-size:0.7rem; background:#444;" onclick="imprimir(${i.id})">VER RELATÓRIO</button>
             </div>
         `).join('');
     }
+
+    function apagar(idx) { if(confirm("Anular este auto?")) { db.splice(idx, 1); localStorage.setItem('spa_master_db', JSON.stringify(db)); renderHistorico(); } }
 
     function imprimir(id) {
         const i = db.find(x => x.id === id);
         const area = document.getElementById('print-area');
         area.innerHTML = `
-            <div style="border:1px solid #000; padding:20px;">
-                <h1 style="color:red; text-align:center;">SPA - AUTO DE FISCALIZAÇÃO</h1>
-                <p><b>Estabelecimento:</b> ${i.firma} (${i.tipo})</p>
-                <p><b>Data:</b> ${i.data}</p>
+            <div style="border: 2px solid #000; padding: 25px;">
+                <h1 style="color:red; text-align:center; margin:0;">SOCIEDADE PORTUGUESA DE AUTORES</h1>
+                <p style="text-align:center;">AUTO DE FISCALIZAÇÃO Nº ${i.id}</p>
                 <hr>
-                <h3>OBRAS MUSICAIS IDENTIFICADAS:</h3>
-                <ul>${i.obras.map(o => `<li>${o}</li>`).join('')}</ul>
-                <hr>
-                <h3>CROQUI DO LOCAL:</h3>
-                <img src="${i.croqui}" style="width:100%; border:1px solid #eee;">
-                <div style="display:flex; justify-content:space-between; margin-top:50px;">
-                    <div style="text-align:center;"><img src="${i.sig1}" width="150"><br>O INSPETOR</div>
-                    <div style="text-align:center;"><img src="${i.sig2}" width="150"><br>O RESPONSÁVEL</div>
+                <p><b>Entidade:</b> ${i.firma} | <b>NIF:</b> ${i.nif}</p>
+                <p><b>Valor Mensal Estimado (2026):</b> ${i.mensal}</p>
+                <p><b>Músicas Identificadas:</b> ${i.obras.join(', ') || 'Nenhuma'}</p>
+                <div style="margin-top:20px;">
+                    <b>Croqui do Recinto:</b><br>
+                    <img src="${i.croqui}" style="width:100%; border:1px solid #eee;">
                 </div>
+                <div style="margin-top:40px; text-align:right;">
+                    <b>Assinatura do Inspetor:</b><br>
+                    <img src="${i.sig}" width="200" style="border-bottom:1px solid #000;">
+                </div>
+                <p style="font-size:0.7rem; margin-top:30px;">Gerado digitalmente em ${i.data} conforme as tabelas mínimas de direitos de execução 2026.</p>
             </div>
         `;
         window.print();
     }
+
+    updateDash();
+    runCalculadora();
 </script>
 
 </body>
