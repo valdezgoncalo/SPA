@@ -3,30 +3,36 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SPA - Fiscalização Digital</title>
+    <title>SPA - Fiscalização Digital Profissional</title>
     <style>
         :root { --spa-red: #cc0000; --white: #ffffff; --bg: #f4f4f4; }
-        body { font-family: 'Segoe UI', sans-serif; background: var(--bg); margin: 0; color: #333; }
-        .header { background: var(--spa-red); color: white; padding: 15px; text-align: center; }
-        .tabs { display: flex; background: white; border-bottom: 2px solid var(--spa-red); position: sticky; top: 0; z-index: 100; }
-        .tab { flex: 1; padding: 15px; text-align: center; font-weight: bold; cursor: pointer; }
+        body { font-family: 'Segoe UI', sans-serif; background: var(--bg); margin: 0; color: #333; padding-bottom: 50px; }
+        .header { background: var(--spa-red); color: white; padding: 15px; text-align: center; position: sticky; top: 0; z-index: 1000; box-shadow: 0 2px 10px rgba(0,0,0,0.2); }
+        .tabs { display: flex; background: white; border-bottom: 2px solid var(--spa-red); }
+        .tab { flex: 1; padding: 15px; text-align: center; font-weight: bold; cursor: pointer; color: #666; }
         .tab.active { background: var(--spa-red); color: white; }
         .container { max-width: 600px; margin: auto; padding: 15px; }
         .card { background: white; padding: 20px; border-radius: 8px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); margin-bottom: 15px; border-top: 4px solid var(--spa-red); }
-        h2 { font-size: 0.9rem; color: var(--spa-red); text-transform: uppercase; margin-bottom: 15px; }
-        label { display: block; margin-top: 10px; font-size: 0.75rem; font-weight: bold; }
-        input, select, textarea { width: 100%; padding: 12px; margin-top: 5px; border: 1px solid #ddd; border-radius: 5px; box-sizing: border-box; }
+        h2 { font-size: 0.85rem; color: var(--spa-red); text-transform: uppercase; margin-bottom: 15px; border-bottom: 1px solid #eee; padding-bottom: 5px; letter-spacing: 1px; }
+        label { display: block; margin-top: 10px; font-size: 0.7rem; font-weight: bold; color: #555; text-transform: uppercase; }
+        input, select, textarea { width: 100%; padding: 12px; margin-top: 5px; border: 1px solid #ddd; border-radius: 5px; box-sizing: border-box; font-size: 16px; }
         .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
         
-        /* Canvas de Assinatura */
-        .sig-canvas { border: 1px dashed #ccc; background: #fafafa; width: 100%; height: 150px; touch-action: none; border-radius: 5px; }
-        .sig-controls { display: flex; justify-content: flex-end; gap: 10px; margin-top: 5px; }
-        .btn-clear { font-size: 0.7rem; background: #eee; border: none; padding: 5px; cursor: pointer; }
+        /* Checkboxes e Toggles */
+        .check-item { display: flex; align-items: center; background: #fff5f5; padding: 10px; border-radius: 5px; margin-bottom: 5px; border: 1px solid #ffcccc; cursor: pointer; font-size: 0.9rem; }
+        .check-item input { width: auto; margin-right: 10px; }
 
-        .btn-main { width: 100%; background: var(--spa-red); color: white; border: none; padding: 18px; border-radius: 5px; font-weight: bold; cursor: pointer; font-size: 1rem; margin-top: 10px; }
-        .history-card { background: white; border-left: 5px solid var(--spa-red); padding: 15px; margin-bottom: 10px; border-radius: 5px; }
+        /* Assinaturas */
+        .sig-canvas { border: 1px dashed #ccc; background: #fafafa; width: 100%; height: 140px; touch-action: none; border-radius: 5px; margin-top: 5px; }
+        .btn-clear { font-size: 0.7rem; background: #eee; border: none; padding: 5px 10px; cursor: pointer; margin-top: 5px; border-radius: 3px; }
+
+        /* Campos Dinâmicos */
+        .extra-field { display: flex; gap: 5px; margin-top: 10px; }
+        .btn-add { background: #444; color: white; border: none; padding: 10px; border-radius: 5px; width: 100%; margin-top: 10px; cursor: pointer; font-weight: bold; }
+
+        .btn-main { width: 100%; background: var(--spa-red); color: white; border: none; padding: 18px; border-radius: 5px; font-weight: bold; cursor: pointer; font-size: 1.1rem; margin-top: 20px; }
         
-        #print-area { display: none; background: white; padding: 40px; }
+        #print-area { display: none; background: white; padding: 40px; font-family: serif; }
         @media print {
             body * { visibility: hidden; }
             #print-area, #print-area * { visibility: visible; }
@@ -37,47 +43,96 @@
 <body>
 
 <div class="header no-print">
-    <h1 style="margin:0; font-size: 1.2rem;">S P A - Fiscalização</h1>
+    <h1 style="margin:0; font-size: 1.1rem; letter-spacing: 1px;">SPA - SISTEMA DE FISCALIZAÇÃO</h1>
 </div>
 
 <div class="tabs no-print">
-    <div class="tab active" id="tab-nova" onclick="switchTab('nova')">NOVA</div>
+    <div class="tab active" id="tab-nova" onclick="switchTab('nova')">NOVA INSPEÇÃO</div>
     <div class="tab" id="tab-historico" onclick="switchTab('historico')">HISTÓRICO</div>
 </div>
 
 <div class="container no-print" id="view-nova">
+    
     <div class="card">
-        <h2>📍 Identificação</h2>
-        <input type="text" id="entidade" placeholder="Firma / Estabelecimento">
+        <h2>📍 Tipo de Estabelecimento</h2>
+        <label>Categoria SPA</label>
+        <select id="categoria-spa" onchange="adaptarCampos()">
+            <option value="generico">Geral / Outros</option>
+            <option value="hotel">Hotelaria / Alojamento</option>
+            <option value="restauracao">Bebidas e Restauração</option>
+            <option value="comercio">Comércio / Lojas</option>
+            <option value="ginasio">Ginásio / Health Club</option>
+        </select>
+
+        <label>Nome da Firma / Estabelecimento</label>
+        <input type="text" id="entidade" placeholder="Ex: Pastelaria Freno, Lda">
+        
         <div class="grid">
-            <input type="number" id="nif" placeholder="NIF">
-            <input type="text" id="cae" placeholder="CAE">
+            <div><label>NIF</label><input type="number" id="nif"></div>
+            <div><label>CAE</label><input type="text" id="cae"></div>
         </div>
+        
+        <label>Período e Horário de Funcionamento</label>
+        <input type="text" id="horario" placeholder="Ex: 08h00 - 20h00 | Seg-Sáb">
+    </div>
+
+    <div class="card">
+        <h2>📏 Medições e Capacidade</h2>
         <div class="grid">
-            <input type="number" id="area" placeholder="Área m2">
-            <input type="number" id="lotacao" placeholder="Lotação">
+            <div>
+                <label id="label-medida-1">Área (m²)</label>
+                <input type="number" id="valor-1">
+            </div>
+            <div>
+                <label id="label-medida-2">Lotação</label>
+                <input type="number" id="valor-2">
+            </div>
+        </div>
+        <div id="hotel-exclusive" style="display:none; margin-top:10px;">
+            <label>N.º de Estrelas</label>
+            <select id="estrelas">
+                <option value="-">-</option><option value="1*">1*</option><option value="2*">2*</option>
+                <option value="3*">3*</option><option value="4*">4*</option><option value="5*">5*</option>
+            </select>
         </div>
     </div>
 
     <div class="card">
         <h2>⚡ Funções Verificadas</h2>
-        <div style="font-size: 0.9rem;">
-            <label><input type="checkbox" name="funcao" value="TV Cabo"> TV Cabo / Satélite</label><br>
-            <label><input type="checkbox" name="funcao" value="Música Ambiente"> Música Ambiente</label><br>
-            <label><input type="checkbox" name="funcao" value="DJ / Baile"> DJ / Baile</label><br>
-            <label><input type="checkbox" name="funcao" value="Karaoke"> Karaoke</label>
+        <div class="check-group">
+            <label class="check-item"><input type="checkbox" name="funcao" value="TV Cabo / Satélite"> TV Cabo / Satélite</label>
+            <label class="check-item"><input type="checkbox" name="funcao" value="Música Ambiente"> Música Ambiente</label>
+            <label class="check-item"><input type="checkbox" name="funcao" value="DJ / Baile"> DJ / Baile</label>
+            <label class="check-item"><input type="checkbox" name="funcao" value="Karaoke"> Karaoke</label>
+            <label class="check-item"><input type="checkbox" name="funcao" value="Fados"> Fados</label>
+            <label class="check-item"><input type="checkbox" name="funcao" value="Concerto"> Concerto</label>
         </div>
+        <label>Obras Identificadas (Canais/Músicas)</label>
+        <input type="text" id="obras" placeholder="Ex: SIC, CNN, Spotify Playlist">
     </div>
 
     <div class="card">
-        <h2>✍️ Assinaturas</h2>
-        <label>O Inspetor</label>
+        <h2>➕ Campos Adicionais</h2>
+        <div id="extra-fields-container"></div>
+        <button class="btn-add" onclick="addExtraField()">+ Adicionar Campo Livre</button>
+    </div>
+
+    <div class="card">
+        <h2>📄 Formalidades</h2>
+        <label class="check-item">
+            <input type="checkbox" id="brochura"> Entregue brochura de Comunicação Pública
+        </label>
+    </div>
+
+    <div class="card">
+        <h2>✍️ Validação e Assinatura</h2>
+        <label>Assinatura do Inspetor</label>
         <canvas id="sig-inspetor" class="sig-canvas"></canvas>
-        <div class="sig-controls"><button class="btn-clear" onclick="clearSig('sig-inspetor')">Limpar</button></div>
+        <button class="btn-clear" onclick="clearSig('sig-inspetor')">Limpar</button>
         
-        <label>A Gerência / Pessoa Contactada</label>
+        <label style="margin-top:20px;">Assinatura do Gerente / Responsável</label>
         <canvas id="sig-gerente" class="sig-canvas"></canvas>
-        <div class="sig-controls"><button class="btn-clear" onclick="clearSig('sig-gerente')">Limpar</button></div>
+        <button class="btn-clear" onclick="clearSig('sig-gerente')">Limpar</button>
     </div>
 
     <button class="btn-main" onclick="salvar()">FINALIZAR E ASSINAR AUTO</button>
@@ -90,88 +145,147 @@
 <div id="print-area"></div>
 
 <script>
-    let db = JSON.parse(localStorage.getItem('spa_final_db')) || [];
+    let db = JSON.parse(localStorage.getItem('spa_final_v5')) || [];
 
-    // Lógica de Desenho nas Assinaturas
+    // Adaptação dos campos conforme categoria
+    function adaptarCampos() {
+        const cat = document.getElementById('categoria-spa').value;
+        const l1 = document.getElementById('label-medida-1');
+        const l2 = document.getElementById('label-medida-2');
+        const hotelDiv = document.getElementById('hotel-exclusive');
+
+        hotelDiv.style.display = (cat === 'hotel') ? 'block' : 'none';
+
+        if(cat === 'hotel') { l1.innerText = "N.º Quartos"; l2.innerText = "Lotação Total"; }
+        else if(cat === 'ginasio' || cat === 'comercio') { l1.innerText = "Área m²"; l2.innerText = "N.º Altifalantes/TVs"; }
+        else { l1.innerText = "Área m²"; l2.innerText = "Lotação"; }
+    }
+
+    function addExtraField() {
+        const container = document.getElementById('extra-fields-container');
+        const div = document.createElement('div');
+        div.className = 'extra-field';
+        div.innerHTML = `<input type="text" class="ex-l" placeholder="Campo"><input type="text" class="ex-v" placeholder="Valor">`;
+        container.appendChild(div);
+    }
+
     function setupCanvas(id) {
         const canvas = document.getElementById(id);
         const ctx = canvas.getContext('2d');
         let drawing = false;
+        canvas.width = canvas.offsetWidth;
+        canvas.height = canvas.offsetHeight;
+        ctx.lineWidth = 2;
 
         function getPos(e) {
             const rect = canvas.getBoundingClientRect();
-            return { x: (e.clientX || e.touches[0].clientX) - rect.left, y: (e.clientY || e.touches[0].clientY) - rect.top };
+            const clientX = e.clientX || (e.touches ? e.touches[0].clientX : 0);
+            const clientY = e.clientY || (e.touches ? e.touches[0].clientY : 0);
+            return { x: clientX - rect.left, y: clientY - rect.top };
         }
-
-        function start(e) { drawing = true; ctx.beginPath(); const p = getPos(e); ctx.moveTo(p.x, p.y); }
-        function move(e) { if (!drawing) return; const p = getPos(e); ctx.lineTo(p.x, p.y); ctx.stroke(); }
-        function end() { drawing = false; }
-
-        canvas.addEventListener('mousedown', start); canvas.addEventListener('mousemove', move); window.addEventListener('mouseup', end);
-        canvas.addEventListener('touchstart', start); canvas.addEventListener('touchmove', move); canvas.addEventListener('touchend', end);
+        canvas.addEventListener('touchstart', (e) => { drawing = true; ctx.beginPath(); const p = getPos(e); ctx.moveTo(p.x, p.y); e.preventDefault(); });
+        canvas.addEventListener('touchmove', (e) => { if(!drawing) return; const p = getPos(e); ctx.lineTo(p.x, p.y); ctx.stroke(); e.preventDefault(); });
+        canvas.addEventListener('touchend', () => drawing = false);
+        // Mouse compat
+        canvas.addEventListener('mousedown', (e) => { drawing = true; ctx.beginPath(); const p = getPos(e); ctx.moveTo(p.x, p.y); });
+        canvas.addEventListener('mousemove', (e) => { if(drawing) { const p = getPos(e); ctx.lineTo(p.x, p.y); ctx.stroke(); } });
+        window.addEventListener('mouseup', () => drawing = false);
     }
 
     setupCanvas('sig-inspetor'); setupCanvas('sig-gerente');
 
-    function clearSig(id) { 
-        const c = document.getElementById(id); 
-        c.getContext('2d').clearRect(0, 0, c.width, c.height); 
-    }
+    function clearSig(id) { const c = document.getElementById(id); c.getContext('2d').clearRect(0,0,c.width,c.height); }
 
     function switchTab(t) {
         document.getElementById('view-nova').style.display = t === 'nova' ? 'block' : 'none';
         document.getElementById('view-historico').style.display = t === 'historico' ? 'block' : 'none';
+        document.querySelectorAll('.tab').forEach(el => el.classList.remove('active'));
+        document.getElementById('tab-' + t).classList.add('active');
         if(t === 'historico') renderHistorico();
     }
 
     function salvar() {
+        const extras = [];
+        document.querySelectorAll('.extra-field').forEach(f => {
+            const l = f.querySelector('.ex-l').value;
+            const v = f.querySelector('.ex-v').value;
+            if(l) extras.push({l, v});
+        });
+
         const data = {
-            id: Date.now(),
-            entidade: document.getElementById('entidade').value,
+            id: Math.floor(Math.random() * 900000) + 100000,
+            entidade: document.getElementById('entidade').value || "Não Identificado",
             nif: document.getElementById('nif').value,
-            area: document.getElementById('area').value,
-            lotacao: document.getElementById('lotacao').value,
+            cae: document.getElementById('cae').value,
+            horario: document.getElementById('horario').value,
+            m1_label: document.getElementById('label-medida-1').innerText,
+            m1_val: document.getElementById('valor-1').value,
+            m2_label: document.getElementById('label-medida-2').innerText,
+            m2_val: document.getElementById('valor-2').value,
+            estrelas: document.getElementById('estrelas').value,
             funcoes: Array.from(document.querySelectorAll('input[name="funcao"]:checked')).map(c => c.value),
+            obras: document.getElementById('obras').value,
+            extras: extras,
+            brochura: document.getElementById('brochura').checked,
             sigInsp: document.getElementById('sig-inspetor').toDataURL(),
             sigGer: document.getElementById('sig-gerente').toDataURL(),
             dataHora: new Date().toLocaleString('pt-PT')
         };
+
         db.unshift(data);
-        localStorage.setItem('spa_final_db', JSON.stringify(db));
-        alert("Fiscalização Finalizada.");
+        localStorage.setItem('spa_final_v5', JSON.stringify(db));
+        alert("AUTO ASSINADO COM SUCESSO!");
         location.reload();
     }
 
     function renderHistorico() {
         const lista = document.getElementById('lista-historico');
-        lista.innerHTML = db.map(item => `
-            <div class="history-card">
-                <strong>${item.entidade}</strong> - ${item.dataHora}<br>
-                <button onclick="gerarPDF(${item.id})">Visualizar Auto Assinado</button>
+        lista.innerHTML = db.length ? db.map(item => `
+            <div class="card" style="border-left: 8px solid var(--spa-red);">
+                <strong>${item.entidade}</strong><br>
+                <small>${item.dataHora} | RA: ${item.id}</small><br>
+                <button class="btn-main" style="padding:10px; font-size:0.8rem; background:#444;" onclick="gerarPDF(${item.id})">VISUALIZAR AUTO ASSINADO</button>
             </div>
-        `).join('');
+        `).join('') : '<p style="text-align:center">Nenhum histórico encontrado.</p>';
     }
 
     function gerarPDF(id) {
         const item = db.find(i => i.id === id);
         const area = document.getElementById('print-area');
+        
         area.innerHTML = `
-            <div style="text-align:center; border-bottom: 2px solid #cc0000; padding-bottom:10px;">
-                <h1 style="color:#cc0000; margin:0;">SPA - AUTO DE FISCALIZAÇÃO</h1>
-                <p>Nº ${item.id} | Data: ${item.dataHora}</p>
-            </div>
-            <div style="margin-top:20px;">
-                <p><b>Estabelecimento:</b> ${item.entidade} (NIF: ${item.nif})</p>
-                <p><b>Área/Lotação:</b> ${item.area}m2 / ${item.lotacao} pax</p>
-                <p><b>Funções:</b> ${item.funcoes.join(', ')}</p>
-                <hr>
-                <div style="display:flex; justify-content:space-between; margin-top:50px;">
-                    <div style="text-align:center;">
-                        <img src="${item.sigInsp}" style="width:150px; border-bottom:1px solid #000;"><br>O Inspetor
+            <div style="border: 2px solid #000; padding: 20px;">
+                <div style="text-align:center; border-bottom: 2px solid #cc0000; padding-bottom:10px;">
+                    <h1 style="color:#cc0000; margin:0; font-size: 1.5rem;">SOCIEDADE PORTUGUESA DE AUTORES</h1>
+                    <p style="margin:5px 0;">AUTO DE FISCALIZAÇÃO Nº ${item.id}</p>
+                </div>
+                
+                <div style="margin-top:20px;">
+                    <p><b>Firma:</b> ${item.entidade} | <b>NIF:</b> ${item.nif} | <b>CAE:</b> ${item.cae}</p>
+                    <p><b>Horário:</b> ${item.horario}</p>
+                    <p><b>${item.m1_label}:</b> ${item.m1_val} | <b>${item.m2_label}:</b> ${item.m2_val} ${item.estrelas !== '-' ? '| <b>Estrelas:</b> '+item.estrelas : ''}</p>
+                    <hr>
+                    <h3>FUNÇÕES VERIFICADAS:</h3>
+                    <p>${item.funcoes.join(' [X], ')} [X]</p>
+                    <p><b>Obras Identificadas:</b> ${item.obras}</p>
+                    ${item.extras.map(e => `<p><b>${e.l}:</b> ${e.v}</p>`).join('')}
+                    <hr>
+                    <p><b>Brochura de Comunicação Pública:</b> ${item.brochura ? 'ENTREGUE' : 'NÃO ENTREGUE'}</p>
+                    <p style="font-style:italic; margin-top:20px; font-size:0.9rem;">
+                        Nos termos do Código do Direito de Autor e dos Direitos Conexos, fica AVISADA a Gerência do Estabelecimento para regularizar a situação junto da SPAUTORES.
+                    </p>
+                    
+                    <div style="display:flex; justify-content:space-between; margin-top:60px;">
+                        <div style="text-align:center; width: 45%;">
+                            <img src="${item.sigInsp}" style="width:100%; max-width:180px; border-bottom:1px solid #000;"><br>
+                            <span style="font-size:0.8rem;">O INSPETOR</span>
+                        </div>
+                        <div style="text-align:center; width: 45%;">
+                            <img src="${item.sigGer}" style="width:100%; max-width:180px; border-bottom:1px solid #000;"><br>
+                            <span style="font-size:0.8rem;">O GERENTE / RESPONSÁVEL</span>
+                        </div>
                     </div>
-                    <div style="text-align:center;">
-                        <img src="${item.sigGer}" style="width:150px; border-bottom:1px solid #000;"><br>O Gerente
-                    </div>
+                    <p style="text-align:center; margin-top:40px; font-size:0.7rem; color:#888;">Gerado em: ${item.dataHora}</p>
                 </div>
             </div>
         `;
