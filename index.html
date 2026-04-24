@@ -3,36 +3,47 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SPA - Fiscalização Digital Profissional</title>
+    <title>SPA Fiscalização - Sistema Integrado v7</title>
     <style>
-        :root { --spa-red: #cc0000; --white: #ffffff; --bg: #f4f4f4; }
-        body { font-family: 'Segoe UI', sans-serif; background: var(--bg); margin: 0; color: #333; padding-bottom: 50px; }
-        .header { background: var(--spa-red); color: white; padding: 15px; text-align: center; position: sticky; top: 0; z-index: 1000; box-shadow: 0 2px 10px rgba(0,0,0,0.2); }
-        .tabs { display: flex; background: white; border-bottom: 2px solid var(--spa-red); }
-        .tab { flex: 1; padding: 15px; text-align: center; font-weight: bold; cursor: pointer; color: #666; }
-        .tab.active { background: var(--spa-red); color: white; }
-        .container { max-width: 600px; margin: auto; padding: 15px; }
-        .card { background: white; padding: 20px; border-radius: 8px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); margin-bottom: 15px; border-top: 4px solid var(--spa-red); }
-        h2 { font-size: 0.85rem; color: var(--spa-red); text-transform: uppercase; margin-bottom: 15px; border-bottom: 1px solid #eee; padding-bottom: 5px; letter-spacing: 1px; }
-        label { display: block; margin-top: 10px; font-size: 0.7rem; font-weight: bold; color: #555; text-transform: uppercase; }
-        input, select, textarea { width: 100%; padding: 12px; margin-top: 5px; border: 1px solid #ddd; border-radius: 5px; box-sizing: border-box; font-size: 16px; }
-        .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+        :root { --spa-red: #cc0000; --white: #ffffff; --bg: #f0f2f5; --text: #1a1a1a; }
+        body { font-family: 'Inter', system-ui, sans-serif; background: var(--bg); margin: 0; color: var(--text); padding-bottom: 50px; }
         
-        /* Checkboxes e Toggles */
-        .check-item { display: flex; align-items: center; background: #fff5f5; padding: 10px; border-radius: 5px; margin-bottom: 5px; border: 1px solid #ffcccc; cursor: pointer; font-size: 0.9rem; }
-        .check-item input { width: auto; margin-right: 10px; }
+        .header { background: var(--spa-red); color: white; padding: 15px; text-align: center; position: sticky; top: 0; z-index: 1000; box-shadow: 0 4px 12px rgba(0,0,0,0.1); }
+        .tabs { display: flex; background: white; border-bottom: 2px solid var(--spa-red); position: sticky; top: 50px; z-index: 999; }
+        .tab { flex: 1; padding: 15px; text-align: center; font-weight: bold; cursor: pointer; transition: 0.3s; color: #666; font-size: 0.75rem; text-transform: uppercase; }
+        .tab.active { background: var(--spa-red); color: white; }
+
+        .container { max-width: 650px; margin: auto; padding: 15px; }
+        .card { background: white; padding: 20px; border-radius: 12px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); margin-bottom: 20px; border-top: 5px solid var(--spa-red); }
+        h2 { font-size: 0.85rem; color: var(--spa-red); text-transform: uppercase; margin-top: 0; letter-spacing: 1px; border-bottom: 1px solid #eee; padding-bottom: 10px; }
+        
+        label { display: block; margin-top: 12px; font-size: 0.7rem; font-weight: 800; color: #444; text-transform: uppercase; }
+        input, select, textarea { width: 100%; padding: 12px; margin-top: 5px; border: 1px solid #ddd; border-radius: 8px; box-sizing: border-box; font-size: 16px; background: #fafafa; }
+        .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+
+        /* Dashboard Stats */
+        .stats-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 20px; }
+        .stat-box { background: white; padding: 15px; border-radius: 10px; text-align: center; border: 1px solid #eee; box-shadow: 0 2px 4px rgba(0,0,0,0.05); }
+        .stat-val { display: block; font-size: 1.5rem; font-weight: bold; color: var(--spa-red); }
+        .stat-lbl { font-size: 0.65rem; color: #888; text-transform: uppercase; }
+
+        /* Checkboxes Custom */
+        .check-group { margin-top: 10px; }
+        .check-item { display: flex; align-items: center; background: #fff5f5; padding: 10px; border-radius: 8px; margin-bottom: 6px; border: 1px solid #ffcccc; cursor: pointer; font-size: 0.85rem; }
+        .check-item input { width: auto; margin-right: 12px; transform: scale(1.2); }
 
         /* Assinaturas */
-        .sig-canvas { border: 1px dashed #ccc; background: #fafafa; width: 100%; height: 140px; touch-action: none; border-radius: 5px; margin-top: 5px; }
-        .btn-clear { font-size: 0.7rem; background: #eee; border: none; padding: 5px 10px; cursor: pointer; margin-top: 5px; border-radius: 3px; }
+        .sig-canvas { border: 1px solid #eee; background: #fdfdfd; width: 100%; height: 140px; touch-action: none; border-radius: 8px; margin-top: 8px; }
+        .btn-clear { font-size: 0.7rem; background: #f0f0f0; border: none; padding: 6px 12px; border-radius: 4px; margin-top: 5px; cursor: pointer; }
 
-        /* Campos Dinâmicos */
-        .extra-field { display: flex; gap: 5px; margin-top: 10px; }
-        .btn-add { background: #444; color: white; border: none; padding: 10px; border-radius: 5px; width: 100%; margin-top: 10px; cursor: pointer; font-weight: bold; }
+        /* Campos Extra */
+        .extra-field { display: flex; gap: 8px; margin-top: 10px; }
+        .btn-add { background: #444; color: white; border: none; padding: 12px; border-radius: 8px; width: 100%; margin-top: 10px; cursor: pointer; font-weight: bold; font-size: 0.8rem; }
 
-        .btn-main { width: 100%; background: var(--spa-red); color: white; border: none; padding: 18px; border-radius: 5px; font-weight: bold; cursor: pointer; font-size: 1.1rem; margin-top: 20px; }
-        
-        #print-area { display: none; background: white; padding: 40px; font-family: serif; }
+        .btn-main { width: 100%; background: var(--spa-red); color: white; border: none; padding: 18px; border-radius: 10px; font-weight: bold; cursor: pointer; font-size: 1rem; transition: 0.2s; margin-top: 15px; box-shadow: 0 4px 10px rgba(204, 0, 0, 0.2); }
+        .btn-main:active { transform: scale(0.98); }
+
+        #print-area { display: none; background: white; padding: 40px; font-family: 'Times New Roman', serif; }
         @media print {
             body * { visibility: hidden; }
             #print-area, #print-area * { visibility: visible; }
@@ -43,168 +54,166 @@
 <body>
 
 <div class="header no-print">
-    <h1 style="margin:0; font-size: 1.1rem; letter-spacing: 1px;">SPA - SISTEMA DE FISCALIZAÇÃO</h1>
+    <h1 style="margin:0; font-size: 1.1rem; letter-spacing: 2px;">SPA FISCALIZAÇÃO DIGITAL</h1>
 </div>
 
 <div class="tabs no-print">
-    <div class="tab active" id="tab-nova" onclick="switchTab('nova')">NOVA INSPEÇÃO</div>
-    <div class="tab" id="tab-historico" onclick="switchTab('historico')">HISTÓRICO</div>
+    <div class="tab active" id="tab-dash" onclick="switchTab('dash')">📊 Dash</div>
+    <div class="tab" id="tab-nova" onclick="switchTab('nova')">📝 Nova</div>
+    <div class="tab" id="tab-historico" onclick="switchTab('historico')">📂 Histórico</div>
 </div>
 
-<div class="container no-print" id="view-nova">
+<div class="container no-print">
     
-    <div class="card">
-        <h2>📍 Tipo de Estabelecimento</h2>
-        <label>Categoria SPA</label>
-        <select id="categoria-spa" onchange="adaptarCampos()">
-            <option value="generico">Geral / Outros</option>
-            <option value="hotel">Hotelaria / Alojamento</option>
-            <option value="restauracao">Bebidas e Restauração</option>
-            <option value="comercio">Comércio / Lojas</option>
-            <option value="ginasio">Ginásio / Health Club</option>
-        </select>
-
-        <label>Nome da Firma / Estabelecimento</label>
-        <input type="text" id="entidade" placeholder="Ex: Pastelaria Freno, Lda">
-        
-        <div class="grid">
-            <div><label>NIF</label><input type="number" id="nif"></div>
-            <div><label>CAE</label><input type="text" id="cae"></div>
+    <div id="view-dash">
+        <div class="stats-grid">
+            <div class="stat-box"><span class="stat-val" id="stat-total">0</span><span class="stat-lbl">Registos</span></div>
+            <div class="stat-box"><span class="stat-val" id="stat-infra">0</span><span class="stat-lbl">Irregularidades</span></div>
         </div>
-        
-        <label>Período e Horário de Funcionamento</label>
-        <input type="text" id="horario" placeholder="Ex: 08h00 - 20h00 | Seg-Sáb">
+        <div class="card">
+            <h2>Último Registo</h2>
+            <div id="recent-activity" style="font-size: 0.85rem; color: #666;">Sem atividade.</div>
+        </div>
     </div>
 
-    <div class="card">
-        <h2>📏 Medições e Capacidade</h2>
-        <div class="grid">
-            <div>
-                <label id="label-medida-1">Área (m²)</label>
-                <input type="number" id="valor-1">
-            </div>
-            <div>
-                <label id="label-medida-2">Lotação</label>
-                <input type="number" id="valor-2">
-            </div>
-        </div>
-        <div id="hotel-exclusive" style="display:none; margin-top:10px;">
-            <label>N.º de Estrelas</label>
-            <select id="estrelas">
-                <option value="-">-</option><option value="1*">1*</option><option value="2*">2*</option>
-                <option value="3*">3*</option><option value="4*">4*</option><option value="5*">5*</option>
+    <div id="view-nova" style="display:none;">
+        <div class="card">
+            <h2>📍 Identificação do Alvo</h2>
+            <label>Tipo (Categoria SPA)</label>
+            <select id="cat-spa" onchange="adaptarCampos()">
+                <option value="restauracao">Bebidas e Restauração</option>
+                <option value="hotel">Hotelaria / Alojamento</option>
+                <option value="comercio">Comércio / Lojas</option>
+                <option value="ginasio">Ginásio / Saúde</option>
             </select>
+            
+            <label>Firma / Estabelecimento</label>
+            <input type="text" id="entidade" placeholder="Ex: Restaurante Central, Lda">
+            
+            <div class="grid">
+                <div><label>NIF</label><input type="number" id="nif"></div>
+                <div><label>CAE</label><input type="text" id="cae"></div>
+            </div>
+            
+            <div class="grid">
+                <div><label>Entrada (Hora)</label><input type="time" id="h-entrada"></div>
+                <div><label>Saída (Hora)</label><input type="time" id="h-saida"></div>
+            </div>
         </div>
-    </div>
 
-    <div class="card">
-        <h2>⚡ Funções Verificadas</h2>
-        <div class="check-group">
-            <label class="check-item"><input type="checkbox" name="funcao" value="TV Cabo / Satélite"> TV Cabo / Satélite</label>
-            <label class="check-item"><input type="checkbox" name="funcao" value="Música Ambiente"> Música Ambiente</label>
-            <label class="check-item"><input type="checkbox" name="funcao" value="DJ / Baile"> DJ / Baile</label>
-            <label class="check-item"><input type="checkbox" name="funcao" value="Karaoke"> Karaoke</label>
-            <label class="check-item"><input type="checkbox" name="funcao" value="Fados"> Fados</label>
-            <label class="check-item"><input type="checkbox" name="funcao" value="Concerto"> Concerto</label>
+        <div class="card" id="card-tecnico">
+            <h2>📏 Critérios de Cálculo</h2>
+            <div class="grid">
+                <div><label id="l1">Área m²</label><input type="number" id="v1"></div>
+                <div><label id="l2">Lotação</label><input type="number" id="v2"></div>
+            </div>
+            <div id="hotel-extra" style="display:none; margin-top:10px;">
+                <label>N.º de Estrelas</label>
+                <select id="stars"><option value="-">-</option><option>2*</option><option>3*</option><option>4*</option><option>5*</option></select>
+            </div>
         </div>
-        <label>Obras Identificadas (Canais/Músicas)</label>
-        <input type="text" id="obras" placeholder="Ex: SIC, CNN, Spotify Playlist">
+
+        <div class="card">
+            <h2>⚡ Funções Verificadas (RA 139647)</h2>
+            <div class="check-group">
+                <label class="check-item"><input type="checkbox" name="f" value="TV Cabo / Satélite"> TV Cabo / Satélite</label>
+                <label class="check-item"><input type="checkbox" name="f" value="Música Ambiente"> Música Ambiente</label>
+                <label class="check-item"><input type="checkbox" name="f" value="DJ / Baile"> DJ / Baile</label>
+                <label class="check-item"><input type="checkbox" name="f" value="Karaoke"> Karaoke</label>
+                <label class="check-item"><input type="checkbox" name="f" value="Fados"> Fados</label>
+            </div>
+            <label>Obras Identificadas (Canais/Músicas)</label>
+            <input type="text" id="obras" placeholder="Ex: SIC, CNN, Spotify">
+        </div>
+
+        <div class="card">
+            <h2>➕ Campos Extra e Notas</h2>
+            <div id="extras-cont"></div>
+            <button class="btn-add" onclick="addExtra()">+ Adicionar Campo Livre</button>
+            <label style="margin-top:15px;">Observações Gerais</label>
+            <textarea id="obs" rows="2"></textarea>
+            <label class="check-item" style="margin-top:10px;">
+                <input type="checkbox" id="brochura"> Entrega de Brochura de Com. Pública
+            </label>
+        </div>
+
+        <div class="card">
+            <h2>✍️ Assinaturas</h2>
+            <label>O Inspetor</label><canvas id="sig1" class="sig-canvas"></canvas>
+            <button class="btn-clear" onclick="clearS('sig1')">Limpar</button>
+            
+            <label style="margin-top:15px;">A Gerência</label><canvas id="sig2" class="sig-canvas"></canvas>
+            <button class="btn-clear" onclick="clearS('sig2')">Limpar</button>
+        </div>
+
+        <button class="btn-main" onclick="finalizar()">GUARDAR E GERAR AUTO</button>
     </div>
 
-    <div class="card">
-        <h2>➕ Campos Adicionais</h2>
-        <div id="extra-fields-container"></div>
-        <button class="btn-add" onclick="addExtraField()">+ Adicionar Campo Livre</button>
+    <div id="view-historico" style="display:none;">
+        <div id="lista-hist"></div>
     </div>
 
-    <div class="card">
-        <h2>📄 Formalidades</h2>
-        <label class="check-item">
-            <input type="checkbox" id="brochura"> Entregue brochura de Comunicação Pública
-        </label>
-    </div>
-
-    <div class="card">
-        <h2>✍️ Validação e Assinatura</h2>
-        <label>Assinatura do Inspetor</label>
-        <canvas id="sig-inspetor" class="sig-canvas"></canvas>
-        <button class="btn-clear" onclick="clearSig('sig-inspetor')">Limpar</button>
-        
-        <label style="margin-top:20px;">Assinatura do Gerente / Responsável</label>
-        <canvas id="sig-gerente" class="sig-canvas"></canvas>
-        <button class="btn-clear" onclick="clearSig('sig-gerente')">Limpar</button>
-    </div>
-
-    <button class="btn-main" onclick="salvar()">FINALIZAR E ASSINAR AUTO</button>
-</div>
-
-<div class="container no-print" id="view-historico" style="display:none;">
-    <div id="lista-historico"></div>
 </div>
 
 <div id="print-area"></div>
 
 <script>
-    let db = JSON.parse(localStorage.getItem('spa_final_v5')) || [];
+    let db = JSON.parse(localStorage.getItem('spa_v7_db')) || [];
 
-    // Adaptação dos campos conforme categoria
+    function switchTab(t) {
+        ['dash','nova','historico'].forEach(v => {
+            document.getElementById('view-'+v).style.display = 'none';
+            document.getElementById('tab-'+v).classList.remove('active');
+        });
+        document.getElementById('view-'+t).style.display = 'block';
+        document.getElementById('tab-'+t).classList.add('active');
+        if(t === 'dash') updateDash();
+        if(t === 'historico') renderHist();
+    }
+
     function adaptarCampos() {
-        const cat = document.getElementById('categoria-spa').value;
-        const l1 = document.getElementById('label-medida-1');
-        const l2 = document.getElementById('label-medida-2');
-        const hotelDiv = document.getElementById('hotel-exclusive');
-
-        hotelDiv.style.display = (cat === 'hotel') ? 'block' : 'none';
-
-        if(cat === 'hotel') { l1.innerText = "N.º Quartos"; l2.innerText = "Lotação Total"; }
-        else if(cat === 'ginasio' || cat === 'comercio') { l1.innerText = "Área m²"; l2.innerText = "N.º Altifalantes/TVs"; }
+        const cat = document.getElementById('cat-spa').value;
+        const l1 = document.getElementById('l1');
+        const l2 = document.getElementById('l2');
+        const hotel = document.getElementById('hotel-extra');
+        
+        hotel.style.display = (cat === 'hotel') ? 'block' : 'none';
+        if(cat === 'hotel') { l1.innerText = "N.º Quartos"; l2.innerText = "Lotação"; }
+        else if(cat === 'comercio') { l1.innerText = "Área m²"; l2.innerText = "N.º Colunas/TVs"; }
         else { l1.innerText = "Área m²"; l2.innerText = "Lotação"; }
     }
 
-    function addExtraField() {
-        const container = document.getElementById('extra-fields-container');
+    function addExtra() {
         const div = document.createElement('div');
         div.className = 'extra-field';
         div.innerHTML = `<input type="text" class="ex-l" placeholder="Campo"><input type="text" class="ex-v" placeholder="Valor">`;
-        container.appendChild(div);
+        document.getElementById('extras-cont').appendChild(div);
     }
 
-    function setupCanvas(id) {
-        const canvas = document.getElementById(id);
-        const ctx = canvas.getContext('2d');
-        let drawing = false;
-        canvas.width = canvas.offsetWidth;
-        canvas.height = canvas.offsetHeight;
-        ctx.lineWidth = 2;
+    // Lógica de Assinatura
+    function initS(id) {
+        const c = document.getElementById(id); const ctx = c.getContext('2d');
+        let draw = false;
+        c.width = c.offsetWidth; c.height = c.offsetHeight;
+        ctx.lineWidth = 2; ctx.strokeStyle = "#000";
+        
+        const pos = (e) => {
+            const r = c.getBoundingClientRect();
+            const cx = e.clientX || (e.touches ? e.touches[0].clientX : 0);
+            const cy = e.clientY || (e.touches ? e.touches[0].clientY : 0);
+            return { x: cx - r.left, y: cy - r.top };
+        };
 
-        function getPos(e) {
-            const rect = canvas.getBoundingClientRect();
-            const clientX = e.clientX || (e.touches ? e.touches[0].clientX : 0);
-            const clientY = e.clientY || (e.touches ? e.touches[0].clientY : 0);
-            return { x: clientX - rect.left, y: clientY - rect.top };
-        }
-        canvas.addEventListener('touchstart', (e) => { drawing = true; ctx.beginPath(); const p = getPos(e); ctx.moveTo(p.x, p.y); e.preventDefault(); });
-        canvas.addEventListener('touchmove', (e) => { if(!drawing) return; const p = getPos(e); ctx.lineTo(p.x, p.y); ctx.stroke(); e.preventDefault(); });
-        canvas.addEventListener('touchend', () => drawing = false);
-        // Mouse compat
-        canvas.addEventListener('mousedown', (e) => { drawing = true; ctx.beginPath(); const p = getPos(e); ctx.moveTo(p.x, p.y); });
-        canvas.addEventListener('mousemove', (e) => { if(drawing) { const p = getPos(e); ctx.lineTo(p.x, p.y); ctx.stroke(); } });
-        window.addEventListener('mouseup', () => drawing = false);
+        const start = (e) => { draw = true; ctx.beginPath(); const p = pos(e); ctx.moveTo(p.x, p.y); if(e.touches) e.preventDefault(); };
+        const move = (e) => { if(!draw) return; const p = pos(e); ctx.lineTo(p.x, p.y); ctx.stroke(); if(e.touches) e.preventDefault(); };
+        
+        c.addEventListener('mousedown', start); c.addEventListener('mousemove', move); window.addEventListener('mouseup', () => draw = false);
+        c.addEventListener('touchstart', start); c.addEventListener('touchmove', move); c.addEventListener('touchend', () => draw = false);
     }
+    initS('sig1'); initS('sig2');
+    function clearS(id) { const c = document.getElementById(id); c.getContext('2d').clearRect(0,0,c.width,c.height); }
 
-    setupCanvas('sig-inspetor'); setupCanvas('sig-gerente');
-
-    function clearSig(id) { const c = document.getElementById(id); c.getContext('2d').clearRect(0,0,c.width,c.height); }
-
-    function switchTab(t) {
-        document.getElementById('view-nova').style.display = t === 'nova' ? 'block' : 'none';
-        document.getElementById('view-historico').style.display = t === 'historico' ? 'block' : 'none';
-        document.querySelectorAll('.tab').forEach(el => el.classList.remove('active'));
-        document.getElementById('tab-' + t).classList.add('active');
-        if(t === 'historico') renderHistorico();
-    }
-
-    function salvar() {
+    function finalizar() {
         const extras = [];
         document.querySelectorAll('.extra-field').forEach(f => {
             const l = f.querySelector('.ex-l').value;
@@ -214,83 +223,74 @@
 
         const data = {
             id: Math.floor(Math.random() * 900000) + 100000,
-            entidade: document.getElementById('entidade').value || "Não Identificado",
+            entidade: document.getElementById('entidade').value || "N/A",
             nif: document.getElementById('nif').value,
-            cae: document.getElementById('cae').value,
-            horario: document.getElementById('horario').value,
-            m1_label: document.getElementById('label-medida-1').innerText,
-            m1_val: document.getElementById('valor-1').value,
-            m2_label: document.getElementById('label-medida-2').innerText,
-            m2_val: document.getElementById('valor-2').value,
-            estrelas: document.getElementById('estrelas').value,
-            funcoes: Array.from(document.querySelectorAll('input[name="funcao"]:checked')).map(c => c.value),
+            h_entrada: document.getElementById('h-entrada').value,
+            h_saida: document.getElementById('h-saida').value,
+            m1_l: document.getElementById('l1').innerText,
+            m1_v: document.getElementById('v1').value,
+            m2_v: document.getElementById('v2').value,
+            funcoes: Array.from(document.querySelectorAll('input[name="f"]:checked')).map(c => c.value),
             obras: document.getElementById('obras').value,
             extras: extras,
             brochura: document.getElementById('brochura').checked,
-            sigInsp: document.getElementById('sig-inspetor').toDataURL(),
-            sigGer: document.getElementById('sig-gerente').toDataURL(),
-            dataHora: new Date().toLocaleString('pt-PT')
+            sig1: document.getElementById('sig1').toDataURL(),
+            sig2: document.getElementById('sig2').toDataURL(),
+            data: new Date().toLocaleString('pt-PT')
         };
 
         db.unshift(data);
-        localStorage.setItem('spa_final_v5', JSON.stringify(db));
-        alert("AUTO ASSINADO COM SUCESSO!");
+        localStorage.setItem('spa_v7_db', JSON.stringify(db));
+        alert("AUTO FINALIZADO!");
         location.reload();
     }
 
-    function renderHistorico() {
-        const lista = document.getElementById('lista-historico');
-        lista.innerHTML = db.length ? db.map(item => `
+    function updateDash() {
+        document.getElementById('stat-total').innerText = db.length;
+        document.getElementById('stat-infra').innerText = db.filter(i => i.funcoes.length > 0).length;
+        if(db[0]) document.getElementById('recent-activity').innerText = `Última: ${db[0].entidade} em ${db[0].data}`;
+    }
+
+    function renderHist() {
+        const l = document.getElementById('lista-hist');
+        l.innerHTML = db.length ? db.map(i => `
             <div class="card" style="border-left: 8px solid var(--spa-red);">
-                <strong>${item.entidade}</strong><br>
-                <small>${item.dataHora} | RA: ${item.id}</small><br>
-                <button class="btn-main" style="padding:10px; font-size:0.8rem; background:#444;" onclick="gerarPDF(${item.id})">VISUALIZAR AUTO ASSINADO</button>
+                <strong>${i.entidade}</strong><br><small>${i.data} | RA: ${i.id}</small><br>
+                <button class="btn-main" style="padding:10px; font-size:0.8rem; background:#444;" onclick="gerarPDF(${i.id})">VISUALIZAR AUTO</button>
             </div>
-        `).join('') : '<p style="text-align:center">Nenhum histórico encontrado.</p>';
+        `).join('') : '<p style="text-align:center">Vazio.</p>';
     }
 
     function gerarPDF(id) {
-        const item = db.find(i => i.id === id);
+        const i = db.find(x => x.id === id);
         const area = document.getElementById('print-area');
-        
         area.innerHTML = `
-            <div style="border: 2px solid #000; padding: 20px;">
-                <div style="text-align:center; border-bottom: 2px solid #cc0000; padding-bottom:10px;">
-                    <h1 style="color:#cc0000; margin:0; font-size: 1.5rem;">SOCIEDADE PORTUGUESA DE AUTORES</h1>
-                    <p style="margin:5px 0;">AUTO DE FISCALIZAÇÃO Nº ${item.id}</p>
+            <div style="border: 2px solid #000; padding: 30px;">
+                <div style="text-align:center; border-bottom: 2px solid #cc0000;">
+                    <h1 style="color:#cc0000; margin:0;">SOCIEDADE PORTUGUESA DE AUTORES</h1>
+                    <p>AUTO DE FISCALIZAÇÃO Nº ${i.id}</p>
                 </div>
-                
                 <div style="margin-top:20px;">
-                    <p><b>Firma:</b> ${item.entidade} | <b>NIF:</b> ${item.nif} | <b>CAE:</b> ${item.cae}</p>
-                    <p><b>Horário:</b> ${item.horario}</p>
-                    <p><b>${item.m1_label}:</b> ${item.m1_val} | <b>${item.m2_label}:</b> ${item.m2_val} ${item.estrelas !== '-' ? '| <b>Estrelas:</b> '+item.estrelas : ''}</p>
+                    <p><b>Estabelecimento:</b> ${i.entidade} | <b>NIF:</b> ${i.nif}</p>
+                    <p><b>Horário Visita:</b> ${i.h_entrada} às ${i.h_saida} | <b>Data:</b> ${i.data}</p>
+                    <p><b>${i.m1_l}:</b> ${i.m1_v} | <b>Lotação:</b> ${i.m2_v}</p>
                     <hr>
                     <h3>FUNÇÕES VERIFICADAS:</h3>
-                    <p>${item.funcoes.join(' [X], ')} [X]</p>
-                    <p><b>Obras Identificadas:</b> ${item.obras}</p>
-                    ${item.extras.map(e => `<p><b>${e.l}:</b> ${e.v}</p>`).join('')}
+                    <p>${i.funcoes.join(', ')} [X]</p>
+                    <p><b>Obras:</b> ${i.obras}</p>
+                    ${i.extras.map(e => `<p><b>${e.l}:</b> ${e.v}</p>`).join('')}
                     <hr>
-                    <p><b>Brochura de Comunicação Pública:</b> ${item.brochura ? 'ENTREGUE' : 'NÃO ENTREGUE'}</p>
-                    <p style="font-style:italic; margin-top:20px; font-size:0.9rem;">
-                        Nos termos do Código do Direito de Autor e dos Direitos Conexos, fica AVISADA a Gerência do Estabelecimento para regularizar a situação junto da SPAUTORES.
-                    </p>
-                    
-                    <div style="display:flex; justify-content:space-between; margin-top:60px;">
-                        <div style="text-align:center; width: 45%;">
-                            <img src="${item.sigInsp}" style="width:100%; max-width:180px; border-bottom:1px solid #000;"><br>
-                            <span style="font-size:0.8rem;">O INSPETOR</span>
-                        </div>
-                        <div style="text-align:center; width: 45%;">
-                            <img src="${item.sigGer}" style="width:100%; max-width:180px; border-bottom:1px solid #000;"><br>
-                            <span style="font-size:0.8rem;">O GERENTE / RESPONSÁVEL</span>
-                        </div>
+                    <p><b>Brochura Entregue:</b> ${i.brochura ? 'Sim' : 'Não'}</p>
+                    <div style="display:flex; justify-content:space-between; margin-top:80px;">
+                        <div style="text-align:center; width:45%;"><img src="${i.sig1}" width="100%"><br>O INSPETOR</div>
+                        <div style="text-align:center; width:45%;"><img src="${i.sig2}" width="100%"><br>A GERÊNCIA</div>
                     </div>
-                    <p style="text-align:center; margin-top:40px; font-size:0.7rem; color:#888;">Gerado em: ${item.dataHora}</p>
                 </div>
             </div>
         `;
         window.print();
     }
+    updateDash();
 </script>
 
 </body>
