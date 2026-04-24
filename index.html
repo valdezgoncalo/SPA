@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SPA Fiscalização - v16 Oficial</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+    <style>
+        :root { --spa-red: #cc0000; --dark: #1a1a1a; --bg: #f4f7f6; }
+        body { font-family: 'Inter', sans-serif; background: var(--bg); margin: 0; color: var(--dark); padding-bottom: 60px; }
+        .header { background: var(--spa-red); color: white; padding: 15px; text-align: center; position: sticky; top: 0; z-index: 1000; }
+        .tabs { display: flex; background: white; border-bottom: 2px solid var(--spa-red); position: sticky; top: 50px; z-index: 999; }
+        .tab { flex: 1; padding: 15px; text-align: center; font-weight: bold; cursor: pointer; color: #777; font-size: 0.7rem; text-transform: uppercase; }
+        .tab.active { background: var(--spa-red); color: white; }
+        .container { max-width: 600px; margin: auto; padding: 15px; }
+        .card { background: white; padding: 20px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); margin-bottom: 20px; border-top: 5px solid var(--spa-red); }
+        h2 { font-size: 0.8rem; color: var(--spa-red); text-transform: uppercase; border-bottom: 1px solid #eee; padding-bottom: 8px; margin-bottom: 15px; letter-spacing: 0.5px; }
+        label { display: block; margin-top: 12px; font-size: 0.7rem; font-weight: bold; color: #555; text-transform: uppercase; }
+        input, select, textarea { width: 100%; padding: 12px; margin-top: 5px; border: 1px solid #ddd; border-radius: 8px; box-sizing: border-box; font-size: 16px; background: #fafafa; }
+        .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+        .canvas-box { border: 1px dashed #bbb; background: #fdfdfd; width: 100%; height: 160px; touch-action: none; border-radius: 8px; }
+        .btn-main { width: 100%; background: var(--spa-red); color: white; border: none; padding: 18px; border-radius: 10px; font-weight: bold; font-size: 1.1rem; cursor: pointer; margin-top: 20px; }
+        .check-item { display: flex; align-items: center; background: #fff; padding: 10px; border-radius: 8px; border: 1px solid #eee; margin-bottom: 5px; font-size: 0.8rem; }
+        .check-item input { width: auto; margin-right: 12px; transform: scale(1.2); }
+        #qrcode { display: flex; justify-content: center; margin-top: 20px; padding: 15px; background: white; }
+        #print-area { display: none; padding: 30px; font-family: 'Times New Roman', serif; }
+        @media print { body * { visibility: hidden; } #print-area, #print-area * { visibility: visible; } #print-area { display: block; position: absolute; left:0; top:0; width:100%; } }
+    </style>
+</head>
+<body>
+
+<div class="header no-print">
+    <h1 style="margin:0; font-size: 1rem; letter-spacing: 1px;">SPA - RELATÓRIO / AVISO DIGITAL</h1>
+</div>
+
+<div class="tabs no-print">
+    <div class="tab active" onclick="switchTab('nova')">📝 Novo Auto</div>
+    <div class="tab" onclick="switchTab('historico')">📂 Histórico</div>
+</div>
+
+<div class="container no-print">
+    <div id="view-nova">
+        <div class="card">
+            <h2>📍 Dados de Campo & Contacto</h2>
+            <div class="grid">
+                <div><label>GPS</label><input type="text" id="gps-coords" readonly></div>
+                <div><label>Hora Entrada</label><input type="time" id="h-entrada"></div>
+            </div>
+            <label>Pessoa Contactada</label>
+            <input type="text" id="p-contactada" placeholder="Nome do Sócio/Gerente/Responsável">
+            <div class="grid">
+                <div><label>Telemóvel</label><input type="tel" id="tel-cont"></div>
+                <div><label>E-mail</label><input type="email" id="email-cont"></div>
+            </div>
+        </div>
+
+        <div class="card">
+            <h2>🏢 Tipologia de Estabelecimento</h2>
+            <label>Tipo de Local (Seleção Oficial)</label>
+            <select id="categoria-local">
+                <option value="Hotelaria e Similares">Hotelaria e Similares</option>
+                <option value="Restauração COM espaço de dança">Bebidas/Restauração COM espaço de dança</option>
+                <option value="Restauração SEM espaço de dança">Bebidas/Restauração SEM espaço de dança</option>
+                <option value="Comerciais / Gerais">Estab. Comerciais em Geral / Locais ao Público</option>
+            </select>
+            
+            <label>Firma / Denominação</label>
+            <input type="text" id="firma" placeholder="Ex: Pastelaria Freno, Lda">
+            
+            <div class="grid">
+                <div><label>NIF</label><input type="number" id="nif"></div>
+                <div><label>CAE</label><input type="text" id="cae"></div>
+            </div>
+
+            <div class="grid">
+                <div><label>Lotação</label><input type="number" id="lotacao"></div>
+                <div><label>Área (m²)</label><input type="number" id="area"></div>
+            </div>
+        </div>
+
+        <div class="card">
+            <h2>⚡ Funções Verificadas</h2>
+            <div id="funcoes-list">
+                <label class="check-item"><input type="checkbox" value="TV Cabo / Satélite"> TV Cabo / Satélite</label>
+                <label class="check-item"><input type="checkbox" value="Música Ambiente s/ DJ"> Música Ambiente sem recurso a Dj's</label>
+                <label class="check-item"><input type="checkbox" value="Dj's Residentes / Baile"> Dj's Residentes / Baile (Gravada/Ao Vivo)</label>
+                <label class="check-item"><input type="checkbox" value="Fados"> Fados</label>
+                <label class="check-item"><input type="checkbox" value="Karaoke"> Karaoke</label>
+                <label class="check-item"><input type="checkbox" value="Concerto"> Concerto</label>
+                <label class="check-item"><input type="checkbox" value="Espectáculo de Variedades"> Espectáculo de Variedades</label>
+                <label class="check-item"><input type="checkbox" value="Exibição de Videogramas"> Exibição de Videogramas</label>
+            </div>
+            
+            <label style="margin-top:15px;">Obras Identificadas (Canais/Músicas)</label>
+            <textarea id="obras" rows="3" placeholder="Ex: Canal CNN, Músicas X, Y..."></textarea>
+            
+            <label class="check-item" style="margin-top:10px; background:#eef9ff;">
+                <input type="checkbox" id="brochura"> Foi entregue brochura e explicado teor
+            </label>
+        </div>
+
+        <div class="card">
+            <h2>📐 Croqui e Assinaturas</h2>
+            <label>Desenho do Recinto</label>
+            <canvas id="canvas-croqui" class="canvas-box"></canvas>
+            <label style="margin-top:15px;">Assinatura Digital</label>
+            <canvas id="canvas-sig" class="canvas-box" style="height:100px;"></canvas>
+            
+            <button class="btn-main" onclick="finalizarAuto()">GUARDAR E GERAR QR</button>
+        </div>
+
+        <div id="qrcode-container" class="card" style="display:none; text-align:center;">
+            <h2>✅ REGISTO #<span id="auto-id-display"></span></h2>
+            <div id="qrcode"></div>
+            <button class="btn-main" style="background:#444;" onclick="window.print()">IMPRIMIR RELATÓRIO</button>
+        </div>
+    </div>
+
+    <div id="view-historico" style="display:none;">
+        <div id="lista-hist"></div>
+    </div>
+</div>
+
+<div id="print-area"></div>
+
+<script>
+    let db = JSON.parse(localStorage.getItem('spa_v16_db')) || [];
+
+    // GPS
+    if (navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition(pos => {
+            document.getElementById('gps-coords').value = `${pos.coords.latitude.toFixed(5)}, ${pos.coords.longitude.toFixed(5)}`;
+        });
+    }
+
+    function switchTab(t) {
+        document.getElementById('view-nova').style.display = t === 'nova' ? 'block' : 'none';
+        document.getElementById('view-historico').style.display = t === 'historico' ? 'block' : 'none';
+        if(t === 'historico') renderHistorico();
+    }
+
+    function initCanvas(id) {
+        const c = document.getElementById(id); const ctx = c.getContext('2d');
+        let d = false;
+        c.width = c.offsetWidth; c.height = c.offsetHeight;
+        const getP = (e) => {
+            const r = c.getBoundingClientRect();
+            return { x: (e.clientX || (e.touches ? e.touches[0].clientX : 0)) - r.left, y: (e.clientY || (e.touches ? e.touches[0].clientY : 0)) - r.top };
+        };
+        c.addEventListener('mousedown', (e) => { d = true; ctx.beginPath(); ctx.moveTo(getP(e).x, getP(e).y); });
+        c.addEventListener('mousemove', (e) => { if(d) ctx.lineTo(getP(e).x, getP(e).y); ctx.stroke(); });
+        window.addEventListener('mouseup', () => d = false);
+        c.addEventListener('touchstart', (e) => { d = true; ctx.beginPath(); ctx.moveTo(getP(e).x, getP(e).y); e.preventDefault(); });
+        c.addEventListener('touchmove', (e) => { if(d) ctx.lineTo(getP(e).x, getP(e).y); ctx.stroke(); e.preventDefault(); });
+    }
+    initCanvas('canvas-croqui'); initCanvas('canvas-sig');
+
+    function finalizarAuto() {
+        const funcoes = Array.from(document.querySelectorAll('#funcoes-list input:checked')).map(c => c.value);
+        const data = {
+            id: Date.now(),
+            firma: document.getElementById('firma').value || "N/D",
+            nif: document.getElementById('nif').value,
+            cae: document.getElementById('cae').value,
+            tipo: document.getElementById('categoria-local').value,
+            contactada: document.getElementById('p-contactada').value,
+            tel: document.getElementById('tel-cont').value,
+            email: document.getElementById('email-cont').value,
+            gps: document.getElementById('gps-coords').value,
+            obras: document.getElementById('obras').value,
+            funcoes: funcoes,
+            croqui: document.getElementById('canvas-croqui').toDataURL(),
+            sig: document.getElementById('canvas-sig').toDataURL(),
+            data: new Date().toLocaleString('pt-PT')
+        };
+        
+        db.unshift(data);
+        localStorage.setItem('spa_v16_db', JSON.stringify(db));
+
+        document.getElementById('auto-id-display').innerText = data.id;
+        document.getElementById('qrcode-container').style.display = 'block';
+        document.getElementById('qrcode').innerHTML = "";
+        new QRCode(document.getElementById("qrcode"), { text: "SPA-AUTO-" + data.id, width: 140, height: 140 });
+
+        prepararRelatorio(data);
+    }
+
+    function renderHistorico() {
+        document.getElementById('lista-hist').innerHTML = db.map(i => `
+            <div class="card" style="border-left: 8px solid var(--spa-red);">
+                <strong>${i.firma}</strong><br><small>${i.data}</small><br>
+                <button class="btn-main" style="padding:10px; font-size:0.7rem; background:#444;" onclick="prepararRelatorioByID(${i.id})">VER PDF</button>
+            </div>
+        `).join('');
+    }
+
+    function prepararRelatorioByID(id) {
+        prepararRelatorio(db.find(x => x.id === id));
+        window.print();
+    }
+
+    function prepararRelatorio(i) {
+        document.getElementById('print-area').innerHTML = `
+            <div style="border: 2px solid #000; padding: 25px;">
+                <h1 style="color:red; text-align:center;">SPA - SOCIEDADE PORTUGUESA DE AUTORES</h1>
+                <p style="text-align:center;"><b>RELATÓRIO / AVISO Nº ${i.id}</b></p>
+                <hr>
+                <p><b>Firma:</b> ${i.firma} | <b>NIF:</b> ${i.nif} | <b>CAE:</b> ${i.cae}</p>
+                <p><b>Categoria:</b> ${i.tipo}</p>
+                <p><b>Pessoa Contactada:</b> ${i.contactada} | <b>GPS:</b> ${i.gps}</p>
+                <p><b>Funções:</b> ${i.funcoes.join(', ')}</p>
+                <p><b>Obras:</b> ${i.obras}</p>
+                <hr>
+                <b>Croqui do Recinto:</b><br><img src="${i.croqui}" width="100%">
+                <div style="margin-top:40px; text-align:right;">
+                    <b>Assinatura:</b><br><img src="${i.sig}" width="180">
+                </div>
+            </div>
+        `;
+    }
+</script>
+</body>
+</html>
