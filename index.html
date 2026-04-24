@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SPA - Fiscalização Pro v2</title>
+    <style>
+        :root { 
+            --spa-blue: #1e3a8a; 
+            --spa-red: #b91c1c; 
+            --spa-green: #15803d;
+            --bg: #f1f5f9; 
+        }
+        
+        body { font-family: 'Segoe UI', system-ui, sans-serif; background: var(--bg); margin: 0; padding-bottom: 30px; color: #1e293b; }
+        
+        .tabs { display: flex; background: white; border-bottom: 2px solid #e2e8f0; position: sticky; top: 0; z-index: 100; box-shadow: 0 2px 4px rgba(0,0,0,0.05); }
+        .tab { flex: 1; padding: 18px; text-align: center; font-weight: bold; cursor: pointer; color: #64748b; transition: 0.3s; }
+        .tab.active { color: var(--spa-blue); border-bottom: 4px solid var(--spa-blue); background: #f8fafc; }
+
+        .container { max-width: 600px; margin: auto; padding: 15px; }
+        .card { background: white; padding: 20px; border-radius: 16px; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1); margin-bottom: 20px; border: 1px solid #e2e8f0; }
+
+        h2 { font-size: 1rem; color: var(--spa-blue); margin-top: 0; text-transform: uppercase; letter-spacing: 0.5px; border-bottom: 1px solid #f1f5f9; padding-bottom: 10px; margin-bottom: 15px; }
+        
+        label { display: block; margin-top: 15px; font-size: 0.8rem; color: #475569; font-weight: 700; text-transform: uppercase; }
+        input, select, textarea { width: 100%; padding: 14px; margin-top: 6px; border: 1px solid #cbd5e1; border-radius: 10px; box-sizing: border-box; font-size: 16px; background: #f8fafc; }
+        input:focus { outline: none; border-color: var(--spa-blue); background: white; }
+
+        .btn-primary { width: 100%; background: var(--spa-blue); color: white; border: none; padding: 18px; border-radius: 12px; font-weight: bold; margin-top: 25px; cursor: pointer; font-size: 1rem; box-shadow: 0 4px 6px rgba(30, 58, 138, 0.2); }
+        .btn-export { background: #64748b; color: white; border: none; padding: 10px 15px; border-radius: 8px; cursor: pointer; font-size: 0.8rem; margin-bottom: 15px; }
+        
+        .history-item { border-left: 6px solid #cbd5e1; padding: 15px; margin-bottom: 12px; background: white; border-radius: 10px; box-shadow: 0 2px 4px rgba(0,0,0,0.05); }
+        .status-irregular { border-left-color: var(--spa-red); }
+        .status-ok { border-left-color: var(--spa-green); }
+        .history-header { display: flex; justify-content: space-between; align-items: flex-start; }
+        .gps-badge { font-size: 0.65rem; background: #e2e8f0; padding: 4px 8px; border-radius: 4px; color: #475569; margin-top: 5px; display: inline-block; }
+
+        @media print { .tabs, .btn-primary, .btn-export, .no-print { display: none !important; } }
+    </style>
+</head>
+<body>
+
+<div class="tabs no-print">
+    <div class="tab active" id="tab-nova" onclick="switchTab('nova')">NOVA INSPEÇÃO</div>
+    <div class="tab" id="tab-historico" onclick="switchTab('historico')">HISTÓRICO</div>
+</div>
+
+<div class="container" id="view-nova">
+    <div class="card">
+        <h2>📍 Localização e Identificação</h2>
+        <label>Nome do Estabelecimento</label>
+        <input type="text" id="entidade" placeholder="Nome comercial">
+        
+        <label>NIF Entidade</label>
+        <input type="number" id="nif" placeholder="Contribuinte">
+
+        <label>Tipo de Espaço</label>
+        <select id="tipo">
+            <option>Restauração / Bebidas</option>
+            <option>Hotelaria</option>
+            <option>Ginásio / Saúde</option>
+            <option>Evento / Festival</option>
+        </select>
+    </div>
+
+    <div class="card">
+        <h2>⚖️ Estado da Fiscalização</h2>
+        <label>Licença SPA</label>
+        <select id="licenca">
+            <option value="Regularizada">✅ Regularizada / Em dia</option>
+            <option value="Inexistente">❌ Sem Licença Detetada</option>
+            <option value="Expirada">⚠️ Licença Fora de Prazo</option>
+        </select>
+
+        <label>Notas e Provas</label>
+        <textarea id="obs" rows="3" placeholder="Detalhes técnicos da infração..."></textarea>
+    </div>
+
+    <button class="btn-primary" onclick="capturarESalvar()">FINALIZAR E GUARDAR GPS</button>
+</div>
+
+<div class="container" id="view-historico" style="display:none;">
+    <button class="btn-export" onclick="exportarCSV()">📥 DESCARREGAR EXCEL (CSV)</button>
+    <div id="lista-historico"></div>
+</div>
+
+<script>
+    let inspecoes = JSON.parse(localStorage.getItem('spa_history_v2')) || [];
+
+    function switchTab(tab) {
+        document.getElementById('tab-nova').classList.toggle('active', tab === 'nova');
+        document.getElementById('tab-historico').classList.toggle('active', tab === 'historico');
+        document.getElementById('view-nova').style.display = tab === 'nova' ? 'block' : 'none';
+        document.getElementById('view-historico').style.display = tab === 'historico' ? 'block' : 'none';
+        if(tab === 'historico') renderHistorico();
+    }
+
+    function capturarESalvar() {
+        if (!navigator.geolocation) {
+            salvarFinal(null);
+            return;
+        }
+
+        navigator.geolocation.getCurrentPosition(
+            (pos) => salvarFinal(`${pos.coords.latitude}, ${pos.coords.longitude}`),
+            () => salvarFinal("GPS Negado")
+        );
+    }
+
+    function salvarFinal(coords) {
+        const nova = {
+            id: Date.now(),
+            entidade: document.getElementById('entidade').value || "Não identificado",
+            nif: document.getElementById('nif').value || "---",
+            licenca: document.getElementById('licenca').value,
+            obs: document.getElementById('obs').value,
+            gps: coords,
+            data: new Date().toLocaleString('pt-PT')
+        };
+
+        inspecoes.unshift(nova);
+        localStorage.setItem('spa_history_v2', JSON.stringify(inspecoes));
+        
+        alert("Fiscalização registada com sucesso!");
+        limparForm();
+        switchTab('historico');
+    }
+
+    function renderHistorico() {
+        const lista = document.getElementById('lista-historico');
+        lista.innerHTML = inspecoes.length === 0 ? '<p style="text-align:center;">Vazio.</p>' : '';
+        
+        inspecoes.forEach(item => {
+            const statusClass = item.licenca === 'Regularizada' ? 'status-ok' : 'status-irregular';
+            lista.innerHTML += `
+                <div class="history-item ${statusClass}">
+                    <div class="history-header">
+                        <div>
+                            <strong>${item.entidade}</strong><br>
+                            <span style="font-size:0.75rem; color:#64748b;">${item.data}</span>
+                        </div>
+                        <span style="font-size:0.8rem; font-weight:bold;">${item.licenca}</span>
+                    </div>
+                    <div class="gps-badge">📍 GPS: ${item.gps}</div>
+                </div>
+            `;
+        });
+    }
+
+    function exportarCSV() {
+        let csv = "Data;Entidade;NIF;Estado;GPS;Notas\n";
+        inspecoes.forEach(i => {
+            csv += `${i.data};${i.entidade};${i.nif};${i.licenca};${i.gps};${i.obs}\n`;
+        });
+        
+        const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+        const link = document.createElement("a");
+        link.href = URL.createObjectURL(blob);
+        link.setAttribute("download", "historico_spa.csv");
+        link.click();
+    }
+
+    function limparForm() {
+        document.getElementById('entidade').value = '';
+        document.getElementById('nif').value = '';
+        document.getElementById('obs').value = '';
+    }
+</script>
+
+</body>
+</html>
