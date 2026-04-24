@@ -3,47 +3,38 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SPA Fiscalização - Sistema Integrado v7</title>
+    <title>SPA Fiscalização - Ultimate v8</title>
     <style>
-        :root { --spa-red: #cc0000; --white: #ffffff; --bg: #f0f2f5; --text: #1a1a1a; }
-        body { font-family: 'Inter', system-ui, sans-serif; background: var(--bg); margin: 0; color: var(--text); padding-bottom: 50px; }
+        :root { --spa-red: #cc0000; --white: #ffffff; --bg: #f8f9fa; --dark: #212529; }
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: var(--bg); margin: 0; color: var(--dark); }
         
-        .header { background: var(--spa-red); color: white; padding: 15px; text-align: center; position: sticky; top: 0; z-index: 1000; box-shadow: 0 4px 12px rgba(0,0,0,0.1); }
+        /* UI de Navegação */
+        .header { background: var(--spa-red); color: white; padding: 15px; text-align: center; position: sticky; top: 0; z-index: 1000; box-shadow: 0 2px 10px rgba(0,0,0,0.2); }
         .tabs { display: flex; background: white; border-bottom: 2px solid var(--spa-red); position: sticky; top: 50px; z-index: 999; }
-        .tab { flex: 1; padding: 15px; text-align: center; font-weight: bold; cursor: pointer; transition: 0.3s; color: #666; font-size: 0.75rem; text-transform: uppercase; }
+        .tab { flex: 1; padding: 15px; text-align: center; font-weight: bold; cursor: pointer; color: #777; font-size: 0.7rem; text-transform: uppercase; }
         .tab.active { background: var(--spa-red); color: white; }
 
         .container { max-width: 650px; margin: auto; padding: 15px; }
-        .card { background: white; padding: 20px; border-radius: 12px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); margin-bottom: 20px; border-top: 5px solid var(--spa-red); }
-        h2 { font-size: 0.85rem; color: var(--spa-red); text-transform: uppercase; margin-top: 0; letter-spacing: 1px; border-bottom: 1px solid #eee; padding-bottom: 10px; }
+        .card { background: white; padding: 20px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); margin-bottom: 20px; border-left: 5px solid var(--spa-red); }
+        h2 { font-size: 0.8rem; color: var(--spa-red); text-transform: uppercase; margin-top: 0; border-bottom: 1px solid #eee; padding-bottom: 8px; margin-bottom: 15px; }
+
+        label { display: block; margin-top: 10px; font-size: 0.7rem; font-weight: bold; color: #555; }
+        input, select, textarea { width: 100%; padding: 12px; margin-top: 5px; border: 1px solid #ddd; border-radius: 8px; box-sizing: border-box; font-size: 15px; }
+        .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+
+        /* Módulo de Obras Musicais */
+        .obra-item { background: #fff5f5; border: 1px solid #ffcccc; padding: 10px; border-radius: 8px; margin-top: 8px; display: flex; justify-content: space-between; align-items: center; }
+        .btn-listen { background: #333; color: white; border: none; padding: 10px; border-radius: 50px; cursor: pointer; width: 100%; margin-top: 10px; font-weight: bold; }
+        .btn-listen.active { background: var(--spa-red); animation: pulse 1.5s infinite; }
+
+        @keyframes pulse { 0% { opacity: 1; } 50% { opacity: 0.5; } 100% { opacity: 1; } }
+
+        /* Canvas de Desenho (Croqui) */
+        .canvas-box { background: #fafafa; border: 1px dashed #bbb; border-radius: 8px; width: 100%; height: 200px; touch-action: none; cursor: crosshair; }
+
+        .btn-main { width: 100%; background: var(--spa-red); color: white; border: none; padding: 18px; border-radius: 10px; font-weight: bold; font-size: 1rem; cursor: pointer; margin-top: 20px; }
         
-        label { display: block; margin-top: 12px; font-size: 0.7rem; font-weight: 800; color: #444; text-transform: uppercase; }
-        input, select, textarea { width: 100%; padding: 12px; margin-top: 5px; border: 1px solid #ddd; border-radius: 8px; box-sizing: border-box; font-size: 16px; background: #fafafa; }
-        .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
-
-        /* Dashboard Stats */
-        .stats-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 20px; }
-        .stat-box { background: white; padding: 15px; border-radius: 10px; text-align: center; border: 1px solid #eee; box-shadow: 0 2px 4px rgba(0,0,0,0.05); }
-        .stat-val { display: block; font-size: 1.5rem; font-weight: bold; color: var(--spa-red); }
-        .stat-lbl { font-size: 0.65rem; color: #888; text-transform: uppercase; }
-
-        /* Checkboxes Custom */
-        .check-group { margin-top: 10px; }
-        .check-item { display: flex; align-items: center; background: #fff5f5; padding: 10px; border-radius: 8px; margin-bottom: 6px; border: 1px solid #ffcccc; cursor: pointer; font-size: 0.85rem; }
-        .check-item input { width: auto; margin-right: 12px; transform: scale(1.2); }
-
-        /* Assinaturas */
-        .sig-canvas { border: 1px solid #eee; background: #fdfdfd; width: 100%; height: 140px; touch-action: none; border-radius: 8px; margin-top: 8px; }
-        .btn-clear { font-size: 0.7rem; background: #f0f0f0; border: none; padding: 6px 12px; border-radius: 4px; margin-top: 5px; cursor: pointer; }
-
-        /* Campos Extra */
-        .extra-field { display: flex; gap: 8px; margin-top: 10px; }
-        .btn-add { background: #444; color: white; border: none; padding: 12px; border-radius: 8px; width: 100%; margin-top: 10px; cursor: pointer; font-weight: bold; font-size: 0.8rem; }
-
-        .btn-main { width: 100%; background: var(--spa-red); color: white; border: none; padding: 18px; border-radius: 10px; font-weight: bold; cursor: pointer; font-size: 1rem; transition: 0.2s; margin-top: 15px; box-shadow: 0 4px 10px rgba(204, 0, 0, 0.2); }
-        .btn-main:active { transform: scale(0.98); }
-
-        #print-area { display: none; background: white; padding: 40px; font-family: 'Times New Roman', serif; }
+        #print-area { display: none; padding: 40px; }
         @media print {
             body * { visibility: hidden; }
             #print-area, #print-area * { visibility: visible; }
@@ -54,243 +45,203 @@
 <body>
 
 <div class="header no-print">
-    <h1 style="margin:0; font-size: 1.1rem; letter-spacing: 2px;">SPA FISCALIZAÇÃO DIGITAL</h1>
+    <h1 style="margin:0; font-size: 1rem;">S P A — FISCALIZAÇÃO ULTIMATE</h1>
 </div>
 
 <div class="tabs no-print">
-    <div class="tab active" id="tab-dash" onclick="switchTab('dash')">📊 Dash</div>
-    <div class="tab" id="tab-nova" onclick="switchTab('nova')">📝 Nova</div>
-    <div class="tab" id="tab-historico" onclick="switchTab('historico')">📂 Histórico</div>
+    <div class="tab active" id="tab-nova" onclick="switchTab('nova')">Nova Inspeção</div>
+    <div class="tab" id="tab-historico" onclick="switchTab('historico')">Histórico</div>
 </div>
 
 <div class="container no-print">
     
-    <div id="view-dash">
-        <div class="stats-grid">
-            <div class="stat-box"><span class="stat-val" id="stat-total">0</span><span class="stat-lbl">Registos</span></div>
-            <div class="stat-box"><span class="stat-val" id="stat-infra">0</span><span class="stat-lbl">Irregularidades</span></div>
-        </div>
+    <div id="view-nova">
         <div class="card">
-            <h2>Último Registo</h2>
-            <div id="recent-activity" style="font-size: 0.85rem; color: #666;">Sem atividade.</div>
-        </div>
-    </div>
-
-    <div id="view-nova" style="display:none;">
-        <div class="card">
-            <h2>📍 Identificação do Alvo</h2>
-            <label>Tipo (Categoria SPA)</label>
-            <select id="cat-spa" onchange="adaptarCampos()">
-                <option value="restauracao">Bebidas e Restauração</option>
-                <option value="hotel">Hotelaria / Alojamento</option>
-                <option value="comercio">Comércio / Lojas</option>
-                <option value="ginasio">Ginásio / Saúde</option>
+            <h2>📍 Localização e Identificação</h2>
+            <label>Tipo de Estabelecimento</label>
+            <select id="tipo" onchange="toggleHotel()">
+                <option value="Restaurante">Restaurante / Snack-Bar</option>
+                <option value="Hotel">Hotel / Residencial</option>
+                <option value="Bar">Bar / Discoteca</option>
+                <option value="Loja">Comércio / Loja</option>
             </select>
-            
-            <label>Firma / Estabelecimento</label>
-            <input type="text" id="entidade" placeholder="Ex: Restaurante Central, Lda">
-            
+            <input type="text" id="firma" placeholder="Firma (Ex: Pastelaria Freno, Lda)" style="margin-top:10px;">
             <div class="grid">
-                <div><label>NIF</label><input type="number" id="nif"></div>
-                <div><label>CAE</label><input type="text" id="cae"></div>
+                <input type="number" id="nif" placeholder="NIF">
+                <input type="text" id="cae" placeholder="CAE">
             </div>
-            
-            <div class="grid">
-                <div><label>Entrada (Hora)</label><input type="time" id="h-entrada"></div>
-                <div><label>Saída (Hora)</label><input type="time" id="h-saida"></div>
-            </div>
-        </div>
-
-        <div class="card" id="card-tecnico">
-            <h2>📏 Critérios de Cálculo</h2>
-            <div class="grid">
-                <div><label id="l1">Área m²</label><input type="number" id="v1"></div>
-                <div><label id="l2">Lotação</label><input type="number" id="v2"></div>
-            </div>
-            <div id="hotel-extra" style="display:none; margin-top:10px;">
-                <label>N.º de Estrelas</label>
-                <select id="stars"><option value="-">-</option><option>2*</option><option>3*</option><option>4*</option><option>5*</option></select>
+            <div id="hotel-meta" style="display:none;">
+                <div class="grid" style="margin-top:10px;">
+                    <input type="number" id="quartos" placeholder="N.º Quartos">
+                    <select id="estrelas"><option>Estrelas: -</option><option>3*</option><option>4*</option><option>5*</option></select>
+                </div>
             </div>
         </div>
 
         <div class="card">
-            <h2>⚡ Funções Verificadas (RA 139647)</h2>
-            <div class="check-group">
-                <label class="check-item"><input type="checkbox" name="f" value="TV Cabo / Satélite"> TV Cabo / Satélite</label>
-                <label class="check-item"><input type="checkbox" name="f" value="Música Ambiente"> Música Ambiente</label>
-                <label class="check-item"><input type="checkbox" name="f" value="DJ / Baile"> DJ / Baile</label>
-                <label class="check-item"><input type="checkbox" name="f" value="Karaoke"> Karaoke</label>
-                <label class="check-item"><input type="checkbox" name="f" value="Fados"> Fados</label>
-            </div>
-            <label>Obras Identificadas (Canais/Músicas)</label>
-            <input type="text" id="obras" placeholder="Ex: SIC, CNN, Spotify">
-        </div>
-
-        <div class="card">
-            <h2>➕ Campos Extra e Notas</h2>
-            <div id="extras-cont"></div>
-            <button class="btn-add" onclick="addExtra()">+ Adicionar Campo Livre</button>
-            <label style="margin-top:15px;">Observações Gerais</label>
-            <textarea id="obs" rows="2"></textarea>
-            <label class="check-item" style="margin-top:10px;">
-                <input type="checkbox" id="brochura"> Entrega de Brochura de Com. Pública
-            </label>
-        </div>
-
-        <div class="card">
-            <h2>✍️ Assinaturas</h2>
-            <label>O Inspetor</label><canvas id="sig1" class="sig-canvas"></canvas>
-            <button class="btn-clear" onclick="clearS('sig1')">Limpar</button>
+            <h2>🎵 Identificação de Obras Musicais</h2>
+            <p style="font-size: 0.7rem; color: #888; margin-top: -10px;">Identifique as músicas que estão a tocar no local.</p>
+            <button class="btn-listen" id="listenBtn" onclick="simularEscuta()">🎧 OUVIR E IDENTIFICAR MÚSICA</button>
             
-            <label style="margin-top:15px;">A Gerência</label><canvas id="sig2" class="sig-canvas"></canvas>
-            <button class="btn-clear" onclick="clearS('sig2')">Limpar</button>
+            <div id="obras-lista" style="margin-top:15px;"></div>
+            
+            <label>Inserção Manual</label>
+            <input type="text" id="manual-obra" placeholder="Nome da Obra / Artista">
+            <button class="btn-listen" style="background:#666; font-size:0.7rem;" onclick="addObraManual()">ADICIONAR À LISTA</button>
         </div>
 
-        <button class="btn-main" onclick="finalizar()">GUARDAR E GERAR AUTO</button>
+        <div class="card">
+            <h2>📐 Croqui do Recinto</h2>
+            <p style="font-size: 0.7rem; color: #888;">Desenhe a localização das colunas (O) e TVs (X).</p>
+            <canvas id="croqui" class="canvas-box"></canvas>
+            <button style="font-size:0.6rem; border:none; padding:5px;" onclick="limparCanvas('croqui')">Limpar Desenho</button>
+        </div>
+
+        <div class="card">
+            <h2>✍️ Validação Digital</h2>
+            <label>Assinatura do Inspetor</label>
+            <canvas id="sig-ins" class="canvas-box" style="height:100px;"></canvas>
+            <label>Assinatura do Responsável</label>
+            <canvas id="sig-res" class="canvas-box" style="height:100px;"></canvas>
+        </div>
+
+        <button class="btn-main" onclick="salvarAuto()">FINALIZAR E ASSINAR AUTO</button>
     </div>
 
     <div id="view-historico" style="display:none;">
         <div id="lista-hist"></div>
     </div>
-
 </div>
 
 <div id="print-area"></div>
 
 <script>
-    let db = JSON.parse(localStorage.getItem('spa_v7_db')) || [];
+    let db = JSON.parse(localStorage.getItem('spa_v8_db')) || [];
+    let obrasDetetadas = [];
 
     function switchTab(t) {
-        ['dash','nova','historico'].forEach(v => {
-            document.getElementById('view-'+v).style.display = 'none';
-            document.getElementById('tab-'+v).classList.remove('active');
-        });
-        document.getElementById('view-'+t).style.display = 'block';
-        document.getElementById('tab-'+t).classList.add('active');
-        if(t === 'dash') updateDash();
+        document.getElementById('view-nova').style.display = t === 'nova' ? 'block' : 'none';
+        document.getElementById('view-historico').style.display = t === 'historico' ? 'block' : 'none';
         if(t === 'historico') renderHist();
     }
 
-    function adaptarCampos() {
-        const cat = document.getElementById('cat-spa').value;
-        const l1 = document.getElementById('l1');
-        const l2 = document.getElementById('l2');
-        const hotel = document.getElementById('hotel-extra');
-        
-        hotel.style.display = (cat === 'hotel') ? 'block' : 'none';
-        if(cat === 'hotel') { l1.innerText = "N.º Quartos"; l2.innerText = "Lotação"; }
-        else if(cat === 'comercio') { l1.innerText = "Área m²"; l2.innerText = "N.º Colunas/TVs"; }
-        else { l1.innerText = "Área m²"; l2.innerText = "Lotação"; }
+    function toggleHotel() {
+        document.getElementById('hotel-meta').style.display = (document.getElementById('tipo').value === 'Hotel') ? 'block' : 'none';
     }
 
-    function addExtra() {
-        const div = document.createElement('div');
-        div.className = 'extra-field';
-        div.innerHTML = `<input type="text" class="ex-l" placeholder="Campo"><input type="text" class="ex-v" placeholder="Valor">`;
-        document.getElementById('extras-cont').appendChild(div);
+    // Funcionalidade de Identificação de Músicas
+    function simularEscuta() {
+        const btn = document.getElementById('listenBtn');
+        btn.innerText = "A OUVIR AMBIENTE...";
+        btn.classList.add('active');
+
+        // Simulação de detecção após 2 segundos
+        setTimeout(() => {
+            const exemplos = ["Pedro Abrunhosa - Fazer o que ainda não foi feito", "Mariza - Ó Gente da Minha Terra", "The Weeknd - Blinding Lights", "Xutos & Pontapés - A Minha Casinha"];
+            const detetada = exemplos[Math.floor(Math.random() * exemplos.length)];
+            
+            obrasDetetadas.push(detetada);
+            renderObras();
+            
+            btn.innerText = "🎧 OUVIR E IDENTIFICAR MÚSICA";
+            btn.classList.remove('active');
+        }, 2000);
     }
 
-    // Lógica de Assinatura
-    function initS(id) {
-        const c = document.getElementById(id); const ctx = c.getContext('2d');
-        let draw = false;
+    function addObraManual() {
+        const val = document.getElementById('manual-obra').value;
+        if(val) {
+            obrasDetetadas.push(val);
+            document.getElementById('manual-obra').value = '';
+            renderObras();
+        }
+    }
+
+    function renderObras() {
+        const div = document.getElementById('obras-lista');
+        div.innerHTML = obrasDetetadas.map((o, index) => `
+            <div class="obra-item">
+                <span>✅ <b>${o}</b></span>
+                <button onclick="removerObra(${index})" style="border:none; color:red; background:none;">✖</button>
+            </div>
+        `).join('');
+    }
+
+    function removerObra(i) { obrasDetetadas.splice(i, 1); renderObras(); }
+
+    // Gestão de Canvas (Desenho e Assinaturas)
+    function setupCanvas(id) {
+        const c = document.getElementById(id);
+        const ctx = c.getContext('2d');
+        let drawing = false;
         c.width = c.offsetWidth; c.height = c.offsetHeight;
-        ctx.lineWidth = 2; ctx.strokeStyle = "#000";
-        
-        const pos = (e) => {
-            const r = c.getBoundingClientRect();
-            const cx = e.clientX || (e.touches ? e.touches[0].clientX : 0);
-            const cy = e.clientY || (e.touches ? e.touches[0].clientY : 0);
-            return { x: cx - r.left, y: cy - r.top };
+
+        const getXY = (e) => {
+            const rect = c.getBoundingClientRect();
+            const x = (e.clientX || (e.touches ? e.touches[0].clientX : 0)) - rect.left;
+            const y = (e.clientY || (e.touches ? e.touches[0].clientY : 0)) - rect.top;
+            return [x, y];
         };
 
-        const start = (e) => { draw = true; ctx.beginPath(); const p = pos(e); ctx.moveTo(p.x, p.y); if(e.touches) e.preventDefault(); };
-        const move = (e) => { if(!draw) return; const p = pos(e); ctx.lineTo(p.x, p.y); ctx.stroke(); if(e.touches) e.preventDefault(); };
+        const start = (e) => { drawing = true; ctx.beginPath(); ctx.moveTo(...getXY(e)); if(e.touches) e.preventDefault(); };
+        const move = (e) => { if(!drawing) return; ctx.lineTo(...getXY(e)); ctx.stroke(); if(e.touches) e.preventDefault(); };
         
-        c.addEventListener('mousedown', start); c.addEventListener('mousemove', move); window.addEventListener('mouseup', () => draw = false);
-        c.addEventListener('touchstart', start); c.addEventListener('touchmove', move); c.addEventListener('touchend', () => draw = false);
+        c.addEventListener('mousedown', start); c.addEventListener('mousemove', move); window.addEventListener('mouseup', () => drawing = false);
+        c.addEventListener('touchstart', start); c.addEventListener('touchmove', move); c.addEventListener('touchend', () => drawing = false);
     }
-    initS('sig1'); initS('sig2');
-    function clearS(id) { const c = document.getElementById(id); c.getContext('2d').clearRect(0,0,c.width,c.height); }
 
-    function finalizar() {
-        const extras = [];
-        document.querySelectorAll('.extra-field').forEach(f => {
-            const l = f.querySelector('.ex-l').value;
-            const v = f.querySelector('.ex-v').value;
-            if(l) extras.push({l, v});
-        });
+    ['croqui', 'sig-ins', 'sig-res'].forEach(setupCanvas);
+    function limparCanvas(id) { const c = document.getElementById(id); c.getContext('2d').clearRect(0,0,c.width,c.height); }
 
+    function salvarAuto() {
         const data = {
-            id: Math.floor(Math.random() * 900000) + 100000,
-            entidade: document.getElementById('entidade').value || "N/A",
-            nif: document.getElementById('nif').value,
-            h_entrada: document.getElementById('h-entrada').value,
-            h_saida: document.getElementById('h-saida').value,
-            m1_l: document.getElementById('l1').innerText,
-            m1_v: document.getElementById('v1').value,
-            m2_v: document.getElementById('v2').value,
-            funcoes: Array.from(document.querySelectorAll('input[name="f"]:checked')).map(c => c.value),
-            obras: document.getElementById('obras').value,
-            extras: extras,
-            brochura: document.getElementById('brochura').checked,
-            sig1: document.getElementById('sig1').toDataURL(),
-            sig2: document.getElementById('sig2').toDataURL(),
+            id: Date.now(),
+            firma: document.getElementById('firma').value,
+            tipo: document.getElementById('tipo').value,
+            obras: obrasDetetadas,
+            croqui: document.getElementById('croqui').toDataURL(),
+            sig1: document.getElementById('sig-ins').toDataURL(),
+            sig2: document.getElementById('sig-res').toDataURL(),
             data: new Date().toLocaleString('pt-PT')
         };
-
         db.unshift(data);
-        localStorage.setItem('spa_v7_db', JSON.stringify(db));
-        alert("AUTO FINALIZADO!");
+        localStorage.setItem('spa_v8_db', JSON.stringify(db));
+        alert("AUTO GRAVADO COM SUCESSO!");
         location.reload();
-    }
-
-    function updateDash() {
-        document.getElementById('stat-total').innerText = db.length;
-        document.getElementById('stat-infra').innerText = db.filter(i => i.funcoes.length > 0).length;
-        if(db[0]) document.getElementById('recent-activity').innerText = `Última: ${db[0].entidade} em ${db[0].data}`;
     }
 
     function renderHist() {
         const l = document.getElementById('lista-hist');
-        l.innerHTML = db.length ? db.map(i => `
-            <div class="card" style="border-left: 8px solid var(--spa-red);">
-                <strong>${i.entidade}</strong><br><small>${i.data} | RA: ${i.id}</small><br>
-                <button class="btn-main" style="padding:10px; font-size:0.8rem; background:#444;" onclick="gerarPDF(${i.id})">VISUALIZAR AUTO</button>
+        l.innerHTML = db.map(i => `
+            <div class="card">
+                <strong>${i.firma}</strong><br><small>${i.data}</small><br>
+                <button class="btn-main" style="padding:10px; font-size:0.7rem; background:#444;" onclick="imprimir(${i.id})">VER RELATÓRIO COMPLETO</button>
             </div>
-        `).join('') : '<p style="text-align:center">Vazio.</p>';
+        `).join('');
     }
 
-    function gerarPDF(id) {
+    function imprimir(id) {
         const i = db.find(x => x.id === id);
         const area = document.getElementById('print-area');
         area.innerHTML = `
-            <div style="border: 2px solid #000; padding: 30px;">
-                <div style="text-align:center; border-bottom: 2px solid #cc0000;">
-                    <h1 style="color:#cc0000; margin:0;">SOCIEDADE PORTUGUESA DE AUTORES</h1>
-                    <p>AUTO DE FISCALIZAÇÃO Nº ${i.id}</p>
-                </div>
-                <div style="margin-top:20px;">
-                    <p><b>Estabelecimento:</b> ${i.entidade} | <b>NIF:</b> ${i.nif}</p>
-                    <p><b>Horário Visita:</b> ${i.h_entrada} às ${i.h_saida} | <b>Data:</b> ${i.data}</p>
-                    <p><b>${i.m1_l}:</b> ${i.m1_v} | <b>Lotação:</b> ${i.m2_v}</p>
-                    <hr>
-                    <h3>FUNÇÕES VERIFICADAS:</h3>
-                    <p>${i.funcoes.join(', ')} [X]</p>
-                    <p><b>Obras:</b> ${i.obras}</p>
-                    ${i.extras.map(e => `<p><b>${e.l}:</b> ${e.v}</p>`).join('')}
-                    <hr>
-                    <p><b>Brochura Entregue:</b> ${i.brochura ? 'Sim' : 'Não'}</p>
-                    <div style="display:flex; justify-content:space-between; margin-top:80px;">
-                        <div style="text-align:center; width:45%;"><img src="${i.sig1}" width="100%"><br>O INSPETOR</div>
-                        <div style="text-align:center; width:45%;"><img src="${i.sig2}" width="100%"><br>A GERÊNCIA</div>
-                    </div>
+            <div style="border:1px solid #000; padding:20px;">
+                <h1 style="color:red; text-align:center;">SPA - AUTO DE FISCALIZAÇÃO</h1>
+                <p><b>Estabelecimento:</b> ${i.firma} (${i.tipo})</p>
+                <p><b>Data:</b> ${i.data}</p>
+                <hr>
+                <h3>OBRAS MUSICAIS IDENTIFICADAS:</h3>
+                <ul>${i.obras.map(o => `<li>${o}</li>`).join('')}</ul>
+                <hr>
+                <h3>CROQUI DO LOCAL:</h3>
+                <img src="${i.croqui}" style="width:100%; border:1px solid #eee;">
+                <div style="display:flex; justify-content:space-between; margin-top:50px;">
+                    <div style="text-align:center;"><img src="${i.sig1}" width="150"><br>O INSPETOR</div>
+                    <div style="text-align:center;"><img src="${i.sig2}" width="150"><br>O RESPONSÁVEL</div>
                 </div>
             </div>
         `;
         window.print();
     }
-    updateDash();
 </script>
 
 </body>
